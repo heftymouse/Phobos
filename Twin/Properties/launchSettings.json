@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "Twin (Package)": {
+      "commandName": "MsixPackage",
+      "nativeDebugging": false
+    },
+    "Twin (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
