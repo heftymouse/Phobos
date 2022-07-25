@@ -44,8 +44,6 @@ namespace Twin.Views
 
         private async void OnNavigateUrl(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
         {
-            if ((args.Element as TextBox).Text is (null or "")) return;
-
             UriBuilder uriBuilder = new UriBuilder((args.Element as TextBox).Text);
             uriBuilder.Scheme = "gemini";
             uriBuilder.Port = uriBuilder.Port is not (1965 or 80 or -1) ? uriBuilder.Port : 1965;
@@ -55,6 +53,7 @@ namespace Twin.Views
 
         private async Task GoToPage(Uri uri)
         {
+            if (uri == null) return;
             DispatcherQueue.TryEnqueue(DispatcherQueuePriority.High,
                 async () =>
                 {

@@ -41,7 +41,7 @@ namespace Twin
                 startUri = value;
                 if (startUri != null)
                 {
-                    rootFrame.Navigate(typeof(BrowserView), value);
+                    rootFrame.Navigate(typeof(BrowserTabView), value);
                 }
             }
         }
@@ -52,7 +52,7 @@ namespace Twin
             this.InitializeComponent();
             new MicaHelper(this).TrySetMicaBackdrop();
             SetCustomTitlebar();
-            rootFrame.Navigate(typeof(BrowserView));
+            rootFrame.Navigate(typeof(BrowserTabView));
         }
 
         private void SetCustomTitlebar()

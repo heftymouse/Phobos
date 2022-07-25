@@ -1,0 +1,19 @@
+﻿<Page
+    x:Class="Twin.Views.BrowserTabView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Twin.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid>
+        <TabView AddTabButtonClick="TabView_AddTabButtonClick" TabCloseRequested="TabView_TabCloseRequested" VerticalAlignment="Stretch" CanDragTabs="True" TabDroppedOutside="TabView_TabDroppedOutside">
+            <TabView.TabItemTemplate>
+                <DataTemplate>
+                    <TabViewItem 
+                </DataTemplate>
+            </TabView.TabItemTemplate>
+        </TabView>
+    </Grid>
+</Page>

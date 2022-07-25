@@ -13,6 +13,8 @@
     <Page.Resources>
         <converters:UriToStringConverter x:Key="UriToStringConverter"/>
         <toolkit:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <toolkit:EmptyStringToObjectConverter x:Key="EmptyStringToObjectConverter" EmptyValue="False" NotEmptyValue="True"/>
+        <toolkit:EmptyObjectToObjectConverter x:Key="EmptyObjectToObjectConverter" EmptyValue="False" NotEmptyValue="True"/>
         <helpers:GemtextHelper x:Key="GemtextHelper"/>
     </Page.Resources>
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -41,7 +43,10 @@
                 </Button.Resources>
                 <FontIcon Glyph="&#xE111;" FontSize="16" VerticalAlignment="Center"/>
             </Button>
-            <Button Margin="0 1 0 0" Grid.Column="2" Background="Transparent" BorderThickness="0" VerticalAlignment="Stretch" Click="OnReload">
+            <Button Margin="0 1 0 0" Grid.Column="2" Background="Transparent" BorderThickness="0" VerticalAlignment="Stretch" Click="OnReload" IsEnabled="{x:Bind model.Uri, Converter={StaticResource EmptyObjectToObjectConverter}}">
+                <Button.Resources>
+                    <SolidColorBrush x:Key="ButtonBackgroundDisabled" Color="Transparent"/>
+                </Button.Resources>
                 <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE149;" FontSize="16"/>
             </Button>
             <TextBox Grid.Column="3" Height="10" PlaceholderText="Enter a Gemini address" Text="{x:Bind model.Uri, Mode=TwoWay, Converter={StaticResource UriToStringConverter}}" IsSpellCheckEnabled="False" VerticalContentAlignment="Center">
@@ -52,7 +57,7 @@
             <Button Grid.Column="4" Background="Transparent" BorderThickness="0" VerticalAlignment="Stretch" Padding="8 0 8 0">
                 <Button.Flyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem Icon="Save" Text="Save Page" Click="SavePage"/>
+                        <MenuFlyoutItem Icon="Save" Text="Save Page" Click="SavePage" IsEnabled="{x:Bind model.CurrentPage.Body, Converter={StaticResource EmptyStringToObjectConverter}}"/>
                         <MenuFlyoutSeparator/>
                         <MenuFlyoutItem Icon="Setting" Text="Settings"/>
                         <MenuFlyoutItem Text="About" Click="ShowInfoDialog">
