@@ -11,28 +11,16 @@ using Twin.Gemini;
 
 namespace Twin.Models
 {
-    internal class BrowserModel : ObservableObject
+    internal partial class BrowserModel : ObservableObject
     {
-        Uri uri;
-        public Uri Uri
-        {
-            get => uri;
-            set => SetProperty(ref uri, value);
-        }
+        [ObservableProperty]
+        public Uri uri;
 
-        GeminiResponse currentPage;
-        public GeminiResponse CurrentPage
-        {
-            get => currentPage;
-            set => SetProperty(ref currentPage, value);
-        }
+        [ObservableProperty]
+        public GeminiResponse currentPage;
 
-        bool isLoading = false;
-        public bool IsLoading
-        {
-            get => isLoading;
-            set => SetProperty(ref isLoading, value);
-        }
+        [ObservableProperty]
+        public bool isLoading;
 
         public History History = new();
     }

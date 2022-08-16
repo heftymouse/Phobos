@@ -7,13 +7,29 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid>
-        <TabView AddTabButtonClick="TabView_AddTabButtonClick" TabCloseRequested="TabView_TabCloseRequested" VerticalAlignment="Stretch" CanDragTabs="True" TabDroppedOutside="TabView_TabDroppedOutside">
-            <TabView.TabItemTemplate>
-                <DataTemplate>
-                    <TabViewItem 
-                </DataTemplate>
-            </TabView.TabItemTemplate>
-        </TabView>
-    </Grid>
+    <TabView
+            x:Name="tabView"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            AllowDropTabs="True"
+            CanDragTabs="True"
+            AddTabButtonClick="OnAddTab"
+            TabCloseRequested="OnCloseTab"
+            TabDroppedOutside="OnTabDroppedOutside"
+            TabDragStarting="tabView_TabDragStarting"
+            TabDragCompleted="tabView_TabDragCompleted"
+            TabStripDragOver="tabView_TabStripDragOver"
+            TabStripDrop="OnTabStripDrop"
+            TabItemsChanged="tabView_TabItemsChanged"
+            >
+        <!--<TabView.TabItemTemplate>
+            <DataTemplate>
+                <TabViewItem Header="New Tab" Background="{ThemeResource SystemColorWindowColor}">
+                    <TabViewItem.IconSource>
+                        <SymbolIconSource Symbol="DockLeft"/>
+                    </TabViewItem.IconSource>
+                </TabViewItem>
+            </DataTemplate>
+        </TabView.TabItemTemplate>-->
+    </TabView>
 </Page>

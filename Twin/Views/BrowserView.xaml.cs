@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using WinRT.Interop;
+using CommunityToolkit.Mvvm.ComponentModel; 
 
 using Twin.Models;
 using Twin.Helpers;
@@ -84,8 +85,8 @@ namespace Twin.Views
 
                         }
                         model.Uri = uri;
+                        // this is dumbass
                         contentBox.Inlines.Clear();
-                            // this is dumbass
                         foreach (Inline i in GemtextHelper.Format(model.CurrentPage.Body, model.Uri))
                         {
                             if (i.GetType() == typeof(Hyperlink))
@@ -94,8 +95,8 @@ namespace Twin.Views
                                 if (link.NavigateUri.Scheme == "gemini")
                                 {
                                     (i as Hyperlink).NavigateUri = null;
-                                }
                                     (i as Hyperlink).Click += OnLinkClicked;
+                                }
                             }
                             contentBox.Inlines.Add(i);
                         }
@@ -190,7 +191,7 @@ namespace Twin.Views
         private async void SavePage(object sender, RoutedEventArgs e)
         {
             FileSavePicker savePicker = new();
-            WinRT.Interop.InitializeWithWindow.Initialize(savePicker, GetActiveWindow());
+            WinRT.Interop.InitializeWithWindow.Initialize(savePicker, WindowNative.GetWindowHandle(this));
 
             savePicker.SuggestedStartLocation = PickerLocationId.Downloads;
             savePicker.SuggestedFileName = model.Uri.AbsoluteUri.TrimEnd('/').Split('/')[^1];

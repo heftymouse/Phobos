@@ -79,11 +79,6 @@
                 </ProgressRing.Transitions>-->
             </ProgressRing>
             <ScrollViewer Padding="0 8 0 0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible" Visibility="{x:Bind model.IsLoading, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True, Mode=OneWay}">
-                <!--<ScrollViewer.Transitions>
-                    <TransitionCollection>
-                        <PaneThemeTransition/>
-                    </TransitionCollection>
-                </ScrollViewer.Transitions>-->
                 <TextBlock x:Name="contentBox" HorizontalAlignment="Center" Margin="12 16 0 0" MaxWidth="960" TextWrapping="WrapWholeWords" IsTextSelectionEnabled="True"/>
             </ScrollViewer>
         </Grid>
