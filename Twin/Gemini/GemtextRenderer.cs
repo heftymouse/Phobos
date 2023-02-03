@@ -14,18 +14,20 @@ using System.Text;
 using System.IO;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Windows.UI;
+using Microsoft.UI;
 
-namespace Twin.Helpers
+namespace Twin.Gemini
 {
-    internal class GemtextHelper
+    internal class GemtextRenderer
     {
-        public static List<Inline> Format(String input, Uri currentHost)
+        public static List<Inline> Render(string input, Uri currentHost)
         {
             Stopwatch stopwatch = new();
             stopwatch.Start();
             List<Inline> result = new List<Inline>();
 
-            using(StringReader reader = new(input))
+            using (StringReader reader = new(input))
             {
                 string line;
                 while ((line = reader.ReadLine()) != null)
@@ -40,13 +42,19 @@ namespace Twin.Helpers
                             run.Text = line + "\n";
                             span.Inlines.Add(run);
                         }
+                        var splitLine = line.Split(null, 2);
+                        if (splitLine.Length == 2)
+                        {
+                            ToolTipService.SetToolTip(span, splitLine[1]);
+                            ToolTipService.SetPlacement(span, Microsoft.UI.Xaml.Controls.Primitives.PlacementMode.Top);
+                        }
                         result.Add(span);
                     }
                     else if (line.StartsWith("#"))
                     {
                         Run run = new();
                         int count = 0;
-                        foreach(char a in line[0..3])
+                        foreach (char a in line[0..3])
                         {
                             if (a == '#') count++;
                         }
@@ -61,7 +69,7 @@ namespace Twin.Helpers
                         run.Text = line.TrimStart('#').TrimStart() + "\n";
                         result.Add(run);
                     }
-                    else if(line.StartsWith("=>"))
+                    else if (line.StartsWith("=>"))
                     {
                         string[] splitLine = line[2..^0].Trim().Split(null, 2);
                         Uri uri;
@@ -78,9 +86,9 @@ namespace Twin.Helpers
                             }
                             else
                             {
-                                builder.Path = currentHost.AbsolutePath + pathAndQuery[0];
+                                builder.Path = $"{currentHost.AbsolutePath.TrimEnd('/')}/{pathAndQuery[0].TrimStart('/')}";
                             }
-                            if(pathAndQuery.Length == 2)
+                            if (pathAndQuery.Length == 2)
                             {
                                 builder.Query = pathAndQuery[1];
                             }
@@ -92,7 +100,7 @@ namespace Twin.Helpers
                         }
                         Hyperlink hyperlink = new();
                         hyperlink.NavigateUri = uri;
-                        if(splitLine.Length == 2)
+                        if (splitLine.Length == 2)
                         {
                             Run run = new();
                             run.Text = splitLine[1].Trim() + "\n";
@@ -113,6 +121,22 @@ namespace Twin.Helpers
                         Run run = new();
                         run.Text = line + "\n";
                         result.Add(run);
+                    }
+                    else if (line.StartsWith(">"))
+                    {
+                        var newLine = line.TrimStart('>').Trim();
+                        InlineUIContainer quote = new()
+                        {
+                            Child = new Border()
+                            {
+                                BorderThickness = new Thickness(1, 0, 0, 0),
+                                BorderBrush = new SolidColorBrush(Colors.WhiteSmoke),
+                                Child = new TextBlock()
+                                {
+                                    Text = newLine
+                                }
+                            }
+                        };
                     }
                     else
                     {

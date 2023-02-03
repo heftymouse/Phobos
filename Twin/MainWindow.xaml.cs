@@ -6,6 +6,7 @@ using WinRT.Interop;
 
 using Twin.Views;
 using Twin.Helpers;
+using System.Diagnostics;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -17,6 +18,8 @@ namespace Twin
     /// </summary>
     public sealed partial class MainWindow : Window
     {
+        public AppWindow AppWindow;
+
         string appTitle
         {
             get
@@ -61,10 +64,11 @@ namespace Twin
 
             IntPtr hWnd = WindowNative.GetWindowHandle(this);
             WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
-            var appWindow = AppWindow.GetFromWindowId(wndId);
+            AppWindow = AppWindow.GetFromWindowId(wndId);
 
-            var titlebar = appWindow.TitleBar;
+            var titlebar = AppWindow.TitleBar;
             titlebar.ExtendsContentIntoTitleBar = true;
+            titlebar.PreferredHeightOption = TitleBarHeightOption.Tall;
             titlebar.ButtonBackgroundColor = Colors.Transparent;
             titlebar.ButtonInactiveBackgroundColor = Colors.Transparent;
             titlebar.ButtonHoverBackgroundColor = ((Microsoft.UI.Xaml.Media.SolidColorBrush)App.Current.Resources.ThemeDictionaries["SystemControlBackgroundListLowBrush"]).Color;

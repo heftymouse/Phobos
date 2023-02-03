@@ -29,7 +29,7 @@
   <Applications>
     <Application Id="App"
       Executable="$targetnametoken$.exe"
-      EntryPoint="$targetentrypoint$">
+      EntryPoint="Windows.PartialTrustApplication">
       <uap:VisualElements
         DisplayName="Twin"
         Description="A terrible Gemini browser"
@@ -51,6 +51,7 @@
   </Applications>
 
   <Capabilities>
-    <rescap:Capability Name="runFullTrust" />
+    <!--<rescap:Capability Name="runFullTrust" />-->
+    <Capability Name="internetClient"/>
   </Capabilities>
 </Package>

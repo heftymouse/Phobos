@@ -34,10 +34,11 @@ namespace Twin
             var appArgs = AppInstance.GetCurrent().GetActivatedEventArgs();
             if (appArgs.Kind == ExtendedActivationKind.Protocol)
             {
-                (m_window as MainWindow).StartUri = (appArgs.Data as ProtocolActivatedEventArgs).Uri;
+                m_window.StartUri = (appArgs.Data as ProtocolActivatedEventArgs).Uri;
             }
+
         }
 
-        private Window m_window;
+        public MainWindow m_window;
     }
 }
