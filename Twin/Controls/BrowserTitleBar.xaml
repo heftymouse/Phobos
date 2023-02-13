@@ -31,9 +31,6 @@
 
             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="4">
                 <Button IsEnabled="{x:Bind IsBackEnabled, Mode=OneWay}" Padding="8" Margin="8 0 0 0" Click="OnBackRequested" RightTapped="Button_RightTapped">
-                    <!--<Button.ContextFlyout>
-                        <MenuFlyout Opening="MenuFlyout_Opening" />
-                    </Button.ContextFlyout>-->
                     <FontIcon Glyph="&#xE112;" FontSize="16" VerticalAlignment="Center"/>
                 </Button>
                 <Button IsEnabled="{x:Bind IsForwardEnabled, Mode=OneWay}" Padding="8" Click="OnForwardRequested">

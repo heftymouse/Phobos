@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
+using System;
 using Windows.ApplicationModel.Activation;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -12,6 +13,8 @@ namespace Twin
     /// </summary>
     public partial class App : Application
     {
+        public MainWindow m_window;
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -28,17 +31,28 @@ namespace Twin
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            m_window = new MainWindow();
-            m_window.Activate();
-
             var appArgs = AppInstance.GetCurrent().GetActivatedEventArgs();
-            if (appArgs.Kind == ExtendedActivationKind.Protocol)
+            m_window = appArgs.Kind switch
             {
-                m_window.StartUri = (appArgs.Data as ProtocolActivatedEventArgs).Uri;
-            }
+                ExtendedActivationKind.Protocol => new((appArgs.Data as ProtocolActivatedEventArgs).Uri),
+                ExtendedActivationKind.CommandLineLaunch => new(ParseInputUri((appArgs.Data as CommandLineActivatedEventArgs).Operation.Arguments)),
+                _ => new()
+            };
 
+            m_window.Activate();
         }
 
-        public MainWindow m_window;
+        private Uri ParseInputUri(string cliArgs)
+        {
+            try
+            {
+                var uri = new Uri(cliArgs.Split()[0]);
+                return uri;
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 }

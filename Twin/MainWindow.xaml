@@ -7,5 +7,5 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Frame x:Name="rootFrame" Margin="0,0,0,0" />
+    <Frame x:Name="RootFrame" x:FieldModifier="public" />
 </Window>
