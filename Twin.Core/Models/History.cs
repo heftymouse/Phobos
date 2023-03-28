@@ -1,29 +1,19 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Twin.Models
+namespace Twin.Core.Models
 {
     public partial class History : ObservableObject
     {
         List<Uri> historyList = new();
 
-        public IReadOnlyList<Uri> Items;
-        public int CurrentPage;
+        public IReadOnlyList<Uri> Items => historyList.AsReadOnly();
+        public int CurrentPage = -1;
 
         [ObservableProperty]
         bool canGoForward;
 
         [ObservableProperty]
         bool canGoBack;
-
-        public History()
-        {
-            Items = historyList.AsReadOnly();
-        }
 
         public void Add(Uri uri)
         {
@@ -35,7 +25,7 @@ namespace Twin.Models
 
         public Uri NextPage()
         {
-            if (!CanGoForward) return null;
+            if (!CanGoForward) throw new InvalidOperationException();
             CurrentPage++;
             CanGoForward = historyList.Count - 1 > CurrentPage;
             CanGoBack = true;
@@ -44,11 +34,18 @@ namespace Twin.Models
 
         public Uri PreviousPage()
         {
-            if (!CanGoBack) return null;
+            if (!CanGoBack) throw new InvalidOperationException();
             CurrentPage--;
             CanGoBack = CurrentPage - 1 >= 0;
             CanGoForward = true;
             return historyList[CurrentPage];
+        }
+
+        public void ClearNextPages()
+        {
+            if (CurrentPage == historyList.Count - 1) return;
+
+            historyList.RemoveRange(CurrentPage + 1, historyList.Count - (CurrentPage + 1));
         }
     }
 }

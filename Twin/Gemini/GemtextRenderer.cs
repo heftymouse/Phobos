@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.UI;
 using Microsoft.UI;
+using Twin.Core.Services;
 
 namespace Twin.Gemini
 {

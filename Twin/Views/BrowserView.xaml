@@ -2,82 +2,126 @@
     x:Class="Twin.Views.BrowserView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Twin.Views"
     xmlns:controls="using:Twin.Controls"
-    xmlns:helpers="using:Twin.Helpers"
-    xmlns:toolkit="using:CommunityToolkit.WinUI.UI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="using:Twin.Helpers"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:icore="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:local="using:Twin.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:toolkit="using:CommunityToolkit.WinUI.UI.Converters"
     mc:Ignorable="d">
 
     <Page.Resources>
-        <toolkit:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <toolkit:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <toolkit:BoolNegationConverter x:Key="InverseBoolToVisibilityConverter" />
     </Page.Resources>
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <controls:BrowserTitleBar 
+        <controls:BrowserTitleBar
             Grid.Row="0"
-            ReloadRequested="OnReload"
-            IsForwardEnabled="{x:Bind model.History.CanGoForward, Mode=OneWay}" 
-            ForwardRequested="OnGoForward"
-            IsBackEnabled="{x:Bind model.History.CanGoBack, Mode=OneWay}" 
-            BackRequested="OnGoBack"
-            Uri="{x:Bind model.Uri, Mode=OneWay}" 
-            UriChanged="OnUriChanged"
-            History="{x:Bind model.History}"
-            >
+            History="{x:Bind vm.History}"
+            IsBackEnabled="{x:Bind vm.History.CanGoBack, Mode=OneWay}"
+            IsForwardEnabled="{x:Bind vm.History.CanGoForward, Mode=OneWay}"
+            Uri="{x:Bind vm.Uri, Mode=OneWay}"
+            UriChanged="OnUriChanged">
+            <i:Interaction.Behaviors>
+                <icore:EventTriggerBehavior EventName="BackRequested">
+                    <icore:InvokeCommandAction Command="{x:Bind vm.BackCommand}" />
+                </icore:EventTriggerBehavior>
+                <icore:EventTriggerBehavior EventName="ForwardRequested">
+                    <icore:InvokeCommandAction Command="{x:Bind vm.ForwardCommand}" />
+                </icore:EventTriggerBehavior>
+                <icore:EventTriggerBehavior EventName="ReloadRequested">
+                    <icore:InvokeCommandAction Command="{x:Bind vm.ReloadCommand}" />
+                </icore:EventTriggerBehavior>
+            </i:Interaction.Behaviors>
             <controls:BrowserTitleBar.MenuItems>
                 <MenuFlyout>
-                    <MenuFlyoutItem Icon="Save" Text="Save Page"/>
-                    <MenuFlyoutSeparator/>
-                    <MenuFlyoutItem Icon="Setting" Text="Settings"/>
-                    <MenuFlyoutItem Text="About" Click="ShowInfoDialog">
+                    <MenuFlyoutItem Icon="Save" Text="Save Page" />
+                    <MenuFlyoutSeparator />
+                    <MenuFlyoutItem Icon="Setting" Text="Settings" />
+                    <MenuFlyoutItem Click="ShowInfoDialog" Text="About">
                         <MenuFlyoutItem.Icon>
-                            <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE946;"/>
+                            <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE946;" />
                         </MenuFlyoutItem.Icon>
                     </MenuFlyoutItem>
                 </MenuFlyout>
             </controls:BrowserTitleBar.MenuItems>
         </controls:BrowserTitleBar>
-        <Grid Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  Background="{ThemeResource LayerFillColorDefaultBrush}" BorderThickness="0 1 0 0" BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}">
-            <ProgressRing VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="LoadingProgressRing" Visibility="{x:Bind model.IsLoading, Mode=OneWay}"/>
-            <ScrollViewer x:Name="PageContent" Visibility="{x:Bind helpers:BindingHelpers.BoolToVisibility(model.IsLoading, x:True), Mode=OneWay}" HorizontalScrollBarVisibility="Visible" ZoomMode="Enabled" MinZoomFactor="0.1" MaxZoomFactor="5">
-                <TextBlock x:Name="contentBox" HorizontalAlignment="Center" Margin="12 16 0 0" MaxWidth="960" TextWrapping="WrapWholeWords"  IsTextSelectionEnabled="True" />
+        <Grid
+            Grid.Row="1"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Background="{ThemeResource LayerFillColorDefaultBrush}"
+            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+            BorderThickness="0,1,0,0">
+            <ProgressRing
+                x:Name="LoadingProgressRing"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Visibility="{x:Bind vm.GoToPageCommand.IsRunning, Mode=OneWay}" />
+            <ScrollViewer
+                x:Name="PageContent"
+                HorizontalScrollBarVisibility="Visible"
+                MaxZoomFactor="5"
+                MinZoomFactor="0.1"
+                ZoomMode="Enabled">
+                <TextBlock
+                    x:Name="contentBox"
+                    MaxWidth="960"
+                    Margin="12,16,0,0"
+                    HorizontalAlignment="Center"
+                    IsTextSelectionEnabled="True"
+                    TextWrapping="WrapWholeWords" />
             </ScrollViewer>
         </Grid>
 
-        <ContentDialog x:Name="InternalErrorDialog"
-                       Title="An internal error occurred"
-                       PrimaryButtonText="OK" 
-                       SecondaryButtonText="Copy"
-                       SecondaryButtonClick="OnErrorTextCopy"
-                       >
-            <ScrollViewer HorizontalScrollMode="Enabled" VerticalScrollMode="Enabled" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" ZoomMode="Enabled" MinZoomFactor="0.5">
-                <TextBlock x:Name="InternalErrorText" FontFamily="Cascadia Mono"/>
+        <!--<ContentDialog
+            x:Name="InternalErrorDialog"
+            Title="An internal error occurred"
+            PrimaryButtonText="OK"
+            SecondaryButtonClick="OnErrorTextCopy"
+            SecondaryButtonText="Copy">
+            <ScrollViewer
+                HorizontalScrollBarVisibility="Auto"
+                HorizontalScrollMode="Enabled"
+                MinZoomFactor="0.5"
+                VerticalScrollBarVisibility="Auto"
+                VerticalScrollMode="Enabled"
+                ZoomMode="Enabled">
+                <TextBlock x:Name="InternalErrorText" FontFamily="Cascadia Mono" />
             </ScrollViewer>
         </ContentDialog>
 
-        <ContentDialog 
+        <ContentDialog
             x:Name="PageErrorDialog"
             Title="An error occurred"
-            PrimaryButtonText="OK"
-            SecondaryButtonText="Retry"
             IsSecondaryButtonEnabled="False"
-            >
-            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" ZoomMode="Enabled" MinZoomFactor="0.1" MaxZoomFactor="5">
-                <TextBlock x:Name="PageErrorText" FontFamily="Cascadia Mono"/>
+            PrimaryButtonText="OK"
+            SecondaryButtonText="Retry">
+            <ScrollViewer
+                HorizontalScrollBarVisibility="Auto"
+                MaxZoomFactor="5"
+                MinZoomFactor="0.1"
+                VerticalScrollBarVisibility="Auto"
+                ZoomMode="Enabled">
+                <TextBlock x:Name="PageErrorText" FontFamily="Cascadia Mono" />
             </ScrollViewer>
-        </ContentDialog>
+        </ContentDialog>-->
 
-        <ContentDialog x:Name="aboutDialog" Title="Twin" PrimaryButtonText="OK">
+        <ContentDialog
+            x:Name="aboutDialog"
+            Title="Twin"
+            PrimaryButtonText="OK">
             <StackPanel Spacing="4">
-                <TextBlock Text="A terrible Gemini browser"/>
+                <TextBlock Text="A terrible Gemini browser" />
                 <TextBlock TextWrapping="WrapWholeWords">
-                    Made by heftymouse#2876 for the <Hyperlink NavigateUri="https://discord.gg/DCYxUzXbvm">UWP Community</Hyperlink> hackathon
-                </TextBlock>
+                    Made by heftymouse#2876 for the<Hyperlink NavigateUri="https://discord.gg/DCYxUzXbvm">UWP Community</Hyperlink>
+                    hackathon</TextBlock>
             </StackPanel>
         </ContentDialog>
     </Grid>

@@ -25,6 +25,7 @@ namespace Twin
             new MicaHelper(this).TrySetMicaBackdrop();
             AppWindow = GetAppWindow();
             SetCustomTitlebar();
+            RootFrame.Hwnd = WindowNative.GetWindowHandle(this);
             RootFrame.Navigate(typeof(BrowserView), startUri);
         }
 

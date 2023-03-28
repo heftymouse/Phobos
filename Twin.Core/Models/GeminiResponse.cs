@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Twin.Gemini
+namespace Twin.Core.Gemini
 {
-    public enum GeminiResponseType 
+    public enum GeminiResponseType
     {
         Input = 1,
         Ok = 2,

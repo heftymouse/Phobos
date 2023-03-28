@@ -1,6 +1,10 @@
-﻿using Microsoft.UI.Xaml;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using System;
+using Twin.Core.Services;
+using Twin.Core.ViewModels;
+using Twin.Services;
 using Windows.ApplicationModel.Activation;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -14,23 +18,17 @@ namespace Twin
     public partial class App : Application
     {
         public MainWindow m_window;
-
-        /// <summary>
-        /// Initializes the singleton application object.  This is the first line of authored code
-        /// executed, and as such is the logical equivalent of main() or WinMain().
-        /// </summary>
+        public IServiceProvider Services { get; private set; }
+        
         public App()
         {
             this.InitializeComponent();
         }
 
-        /// <summary>
-        /// Invoked when the application is launched normally by the end user.  Other entry points
-        /// will be used such as when the application is launched to open a specific file.
-        /// </summary>
-        /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
+            this.ConfigureServices();
+
             var appArgs = AppInstance.GetCurrent().GetActivatedEventArgs();
             m_window = appArgs.Kind switch
             {
@@ -39,7 +37,17 @@ namespace Twin
                 _ => new()
             };
 
+
             m_window.Activate();
+        }
+
+        private void ConfigureServices()
+        {
+            this.Services = new ServiceCollection()
+                .AddTransient<BrowserViewModel>() // viewmodels
+                .AddSingleton<GeminiService>() // services
+                .AddTransient<IDialogService, DialogService>()
+                .BuildServiceProvider();
         }
 
         private Uri ParseInputUri(string cliArgs)

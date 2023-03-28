@@ -10,12 +10,13 @@ using System.Security.Cryptography;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Sockets;
+using Twin.Core.Gemini;
 
-namespace Twin.Gemini
+namespace Twin.Core.Services
 {
-    internal class GeminiRequest
+    public class GeminiService
     {
-        public static async Task<GeminiResponse> RequestPageAsync(Uri uri)
+        public async Task<GeminiResponse> RequestPageAsync(Uri uri)
         {
             using (TcpClient client = new TcpClient(uri.Host, 1965))
             {
@@ -34,15 +35,15 @@ namespace Twin.Gemini
                     string data = "";
                     sslStream.ReadByte();
                     int nextByte;
-                    for(int i = 1; i <= 1024; i++)
+                    for (int i = 1; i <= 1024; i++)
                     {
                         nextByte = sslStream.ReadByte();
-                        if (nextByte == (int)'\r') break;
+                        if (nextByte == '\r') break;
                         meta += (char)nextByte;
                     }
                     sslStream.ReadByte();
                     //client.ReceiveTimeout = 5000;
-                    //sslStream.ReadTimeout = 500;
+                    sslStream.ReadTimeout = 5000;
                     while (true)
                     {
                         byte[] arr = new byte[4096];

@@ -14,12 +14,6 @@ namespace Twin.Helpers
             return !value;
         }
 
-        public static Visibility BoolToVisibility(this bool value, bool inverse = false)
-        {
-            if (inverse) value = !value;
-            return value ? Visibility.Visible : Visibility.Collapsed;
-        }
-
         public static bool IsNotEmpty(string value)
         {
             return !string.IsNullOrEmpty(value);

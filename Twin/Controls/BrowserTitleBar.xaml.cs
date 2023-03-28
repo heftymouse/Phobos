@@ -1,5 +1,4 @@
-﻿using DependencyPropertyGenerator;
-using Microsoft.UI;
+﻿using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -8,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Twin.Helpers;
-using Twin.Models;
+using Twin.Core.Models;
 using Windows.Graphics;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -216,6 +215,11 @@ namespace Twin.Controls
                 mf.Items.Add(new MenuFlyoutItem() { Text = UriHelpers.UriToString(History.Items[History.Items.Count - 1 - i]) });
             }
             mf.ShowAt(sender as FrameworkElement);
+        }
+
+        private void OnPanelButtonClicked(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
