@@ -22,7 +22,6 @@ namespace Twin
         {
             this.Title = "Twin";
             this.InitializeComponent();
-            new MicaHelper(this).TrySetMicaBackdrop();
             AppWindow = GetAppWindow();
             SetCustomTitlebar();
             RootFrame.Hwnd = WindowNative.GetWindowHandle(this);

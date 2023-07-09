@@ -24,9 +24,8 @@ namespace Twin.Controls
             set { SetValue(IsBackEnabledProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty IsBackEnabledProperty =
-            DependencyProperty.Register("IsBackEnabled", typeof(bool), typeof(BrowserTitleBar), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(IsBackEnabled), typeof(bool), typeof(BrowserTitleBar), new PropertyMetadata(false));
 
         public bool IsForwardEnabled
         {
@@ -34,9 +33,8 @@ namespace Twin.Controls
             set { SetValue(IsForwardEnabledProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for IsForwardEnabled.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty IsForwardEnabledProperty =
-            DependencyProperty.Register("IsForwardEnabled", typeof(bool), typeof(BrowserTitleBar), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(IsForwardEnabled), typeof(bool), typeof(BrowserTitleBar), new PropertyMetadata(false));
 
         public Uri Uri
         {
@@ -44,9 +42,8 @@ namespace Twin.Controls
             set { SetValue(UriProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for DisplayUri.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty UriProperty =
-            DependencyProperty.Register("Uri", typeof(Uri), typeof(BrowserTitleBar), new PropertyMetadata(""));
+            DependencyProperty.Register(nameof(Uri), typeof(Uri), typeof(BrowserTitleBar), new PropertyMetadata(""));
 
         public MenuFlyout MenuItems
         {
@@ -65,6 +62,15 @@ namespace Twin.Controls
 
         public static readonly DependencyProperty HistoryProperty =
             DependencyProperty.Register(nameof(History), typeof(History), typeof(BrowserTitleBar), null);
+
+        public bool IsLoading
+        {
+            get => (bool)GetValue(IsLoadingProperty);
+            set => SetValue(IsLoadingProperty, value);
+        }
+
+        public static readonly DependencyProperty IsLoadingProperty =
+            DependencyProperty.Register(nameof(IsLoading), typeof(bool), typeof(BrowserTitleBar), null);
 
         public event EventHandler<Uri> UriChanged;
 

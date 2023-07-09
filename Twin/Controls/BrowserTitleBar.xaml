@@ -87,6 +87,13 @@
                     <KeyboardAccelerator Key="Enter" Invoked="OnUriChanged" />
                 </TextBox.KeyboardAccelerators>
             </TextBox>
+            <ProgressBar
+                Grid.Column="2"
+                Height="2"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Bottom"
+                IsIndeterminate="True"
+                Visibility="{x:Bind IsLoading, Mode=OneWay}" />
 
             <Button
                 x:Name="FlyoutButton"

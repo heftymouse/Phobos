@@ -25,9 +25,9 @@ namespace Twin.Core.Services
                 new RemoteCertificateValidationCallback(VerifyServerCert)
                 ))
                 {
-                    await sslStream.AuthenticateAsClientAsync(uri.Host, null, SslProtocols.Tls13, true);
+                    await sslStream.AuthenticateAsClientAsync(uri.Host, null, SslProtocols.Tls13 | SslProtocols.Tls12, true);
 
-                    await sslStream.WriteAsync(Encoding.UTF8.GetBytes(uri.OriginalString + "\r\n"));
+                    await sslStream.WriteAsync(Encoding.UTF8.GetBytes(uri.ToString() + "\r\n"));
                     await sslStream.FlushAsync();
                     byte[] statusBytes = new byte[2];
                     await sslStream.ReadAsync(statusBytes, 0, statusBytes.Length);
@@ -48,8 +48,8 @@ namespace Twin.Core.Services
                     {
                         byte[] arr = new byte[4096];
                         int bytesRead = await sslStream.ReadAsync(arr, 0, arr.Length);
-                        data += Encoding.UTF8.GetString(arr);
                         if (bytesRead == 0) break;
+                        data += Encoding.UTF8.GetString(arr);
                         data.TrimEnd('\0');
                     }
 

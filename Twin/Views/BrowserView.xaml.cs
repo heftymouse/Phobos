@@ -36,6 +36,7 @@ namespace Twin.Views
             base.OnNavigatedTo(e);
             if (e.Parameter != null)
             {
+                vm.Uri = e.Parameter as Uri;
                 await vm.NavigateCommand.ExecuteAsync(null);
             }
         }
@@ -214,12 +215,7 @@ namespace Twin.Views
 
         private async void ShowInfoDialog(object sender, RoutedEventArgs e)
         {
-            //await aboutDialog.ShowAsync();
-            MainWindow window = new();
-            RootFrame rf = (App.Current as App).m_window.RootFrame;
-            (App.Current as App).m_window.Content = null;
-            window.Content = rf;
-            window.Activate();
+            await aboutDialog.ShowAsync();
         }
 
         //    private void OnErrorTextCopy(ContentDialog sender, ContentDialogButtonClickEventArgs args)

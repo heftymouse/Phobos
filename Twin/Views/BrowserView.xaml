@@ -26,6 +26,7 @@
             History="{x:Bind vm.History}"
             IsBackEnabled="{x:Bind vm.History.CanGoBack, Mode=OneWay}"
             IsForwardEnabled="{x:Bind vm.History.CanGoForward, Mode=OneWay}"
+            IsLoading="{x:Bind vm.GoToPageCommand.IsRunning, Mode=OneWay}"
             Uri="{x:Bind vm.Uri, Mode=OneWay}"
             UriChanged="OnUriChanged">
             <i:Interaction.Behaviors>
@@ -59,14 +60,10 @@
             Background="{ThemeResource LayerFillColorDefaultBrush}"
             BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
             BorderThickness="0,1,0,0">
-            <ProgressRing
-                x:Name="LoadingProgressRing"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Visibility="{x:Bind vm.GoToPageCommand.IsRunning, Mode=OneWay}" />
+
             <ScrollViewer
                 x:Name="PageContent"
-                HorizontalScrollBarVisibility="Visible"
+                HorizontalScrollBarVisibility="Auto"
                 MaxZoomFactor="5"
                 MinZoomFactor="0.1"
                 ZoomMode="Enabled">
