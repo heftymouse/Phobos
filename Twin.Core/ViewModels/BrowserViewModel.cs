@@ -82,6 +82,11 @@ namespace Twin.Core.ViewModels
                         await GoToPage();
                         break;
 
+                    case GeminiResponseType.Redirect:
+                        this.Uri = new Uri(response.Meta);
+                        await GoToPage();
+                        break;
+
                     case GeminiResponseType.Ok:
                         var contentType = new ContentType(response.Meta);
                         if (contentType.MediaType == "text/gemini")
