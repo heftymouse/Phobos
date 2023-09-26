@@ -9,7 +9,8 @@
     xmlns:icore="using:Microsoft.Xaml.Interactions.Core"
     xmlns:local="using:Twin.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:toolkit="using:CommunityToolkit.WinUI.UI.Converters"
+    xmlns:toolkit="using:CommunityToolkit.WinUI.Converters"
+    Loaded="Page_Loaded"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -21,37 +22,14 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <controls:BrowserTitleBar
-            Grid.Row="0"
-            History="{x:Bind vm.History}"
-            IsBackEnabled="{x:Bind vm.History.CanGoBack, Mode=OneWay}"
-            IsForwardEnabled="{x:Bind vm.History.CanGoForward, Mode=OneWay}"
-            IsLoading="{x:Bind vm.GoToPageCommand.IsRunning, Mode=OneWay}"
-            Uri="{x:Bind vm.Uri, Mode=OneWay}"
-            UriChanged="OnUriChanged">
-            <i:Interaction.Behaviors>
-                <icore:EventTriggerBehavior EventName="BackRequested">
-                    <icore:InvokeCommandAction Command="{x:Bind vm.BackCommand}" />
-                </icore:EventTriggerBehavior>
-                <icore:EventTriggerBehavior EventName="ForwardRequested">
-                    <icore:InvokeCommandAction Command="{x:Bind vm.ForwardCommand}" />
-                </icore:EventTriggerBehavior>
-                <icore:EventTriggerBehavior EventName="ReloadRequested">
-                    <icore:InvokeCommandAction Command="{x:Bind vm.ReloadCommand}" />
-                </icore:EventTriggerBehavior>
-            </i:Interaction.Behaviors>
-            <controls:BrowserTitleBar.MenuItems>
+        <controls:BrowserTitleBar Grid.Row="0" ViewModel="{x:Bind vm}">
+            <!--<controls:BrowserTitleBar.MenuItems>
                 <MenuFlyout>
                     <MenuFlyoutItem Icon="Save" Text="Save Page" />
                     <MenuFlyoutSeparator />
                     <MenuFlyoutItem Icon="Setting" Text="Settings" />
-                    <MenuFlyoutItem Click="ShowInfoDialog" Text="About">
-                        <MenuFlyoutItem.Icon>
-                            <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE946;" />
-                        </MenuFlyoutItem.Icon>
-                    </MenuFlyoutItem>
                 </MenuFlyout>
-            </controls:BrowserTitleBar.MenuItems>
+            </controls:BrowserTitleBar.MenuItems>-->
         </controls:BrowserTitleBar>
         <Grid
             Grid.Row="1"
@@ -61,7 +39,7 @@
             BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
             BorderThickness="0,1,0,0">
 
-            <ScrollViewer
+            <ScrollView
                 x:Name="PageContent"
                 HorizontalScrollBarVisibility="Auto"
                 MaxZoomFactor="5"
@@ -74,52 +52,7 @@
                     HorizontalAlignment="Center"
                     IsTextSelectionEnabled="True"
                     TextWrapping="WrapWholeWords" />
-            </ScrollViewer>
+            </ScrollView>
         </Grid>
-
-        <!--<ContentDialog
-            x:Name="InternalErrorDialog"
-            Title="An internal error occurred"
-            PrimaryButtonText="OK"
-            SecondaryButtonClick="OnErrorTextCopy"
-            SecondaryButtonText="Copy">
-            <ScrollViewer
-                HorizontalScrollBarVisibility="Auto"
-                HorizontalScrollMode="Enabled"
-                MinZoomFactor="0.5"
-                VerticalScrollBarVisibility="Auto"
-                VerticalScrollMode="Enabled"
-                ZoomMode="Enabled">
-                <TextBlock x:Name="InternalErrorText" FontFamily="Cascadia Mono" />
-            </ScrollViewer>
-        </ContentDialog>
-
-        <ContentDialog
-            x:Name="PageErrorDialog"
-            Title="An error occurred"
-            IsSecondaryButtonEnabled="False"
-            PrimaryButtonText="OK"
-            SecondaryButtonText="Retry">
-            <ScrollViewer
-                HorizontalScrollBarVisibility="Auto"
-                MaxZoomFactor="5"
-                MinZoomFactor="0.1"
-                VerticalScrollBarVisibility="Auto"
-                ZoomMode="Enabled">
-                <TextBlock x:Name="PageErrorText" FontFamily="Cascadia Mono" />
-            </ScrollViewer>
-        </ContentDialog>-->
-
-        <ContentDialog
-            x:Name="aboutDialog"
-            Title="Twin"
-            PrimaryButtonText="OK">
-            <StackPanel Spacing="4">
-                <TextBlock Text="A terrible Gemini browser" />
-                <TextBlock TextWrapping="WrapWholeWords">
-                    Made by heftymouse#2876 for the<Hyperlink NavigateUri="https://discord.gg/DCYxUzXbvm">UWP Community</Hyperlink>
-                    hackathon</TextBlock>
-            </StackPanel>
-        </ContentDialog>
     </Grid>
 </Page>

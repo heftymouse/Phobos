@@ -9,6 +9,9 @@ using System.Runtime.InteropServices;
 using Twin.Helpers;
 using Twin.Core.Models;
 using Windows.Graphics;
+using Microsoft.UI.Input;
+using System.Windows.Input;
+using Twin.Core.ViewModels;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -17,70 +20,14 @@ namespace Twin.Controls
 {
     public sealed partial class BrowserTitleBar : UserControl
     {
-        #region DependencyProperties
-        public bool IsBackEnabled
+        public BrowserViewModel ViewModel
         {
-            get { return (bool)GetValue(IsBackEnabledProperty); }
-            set { SetValue(IsBackEnabledProperty, value); }
+            get => (BrowserViewModel)GetValue(ViewModelProperty);
+            set => SetValue(ViewModelProperty, value);
         }
 
-        public static readonly DependencyProperty IsBackEnabledProperty =
-            DependencyProperty.Register(nameof(IsBackEnabled), typeof(bool), typeof(BrowserTitleBar), new PropertyMetadata(false));
-
-        public bool IsForwardEnabled
-        {
-            get { return (bool)GetValue(IsForwardEnabledProperty); }
-            set { SetValue(IsForwardEnabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsForwardEnabledProperty =
-            DependencyProperty.Register(nameof(IsForwardEnabled), typeof(bool), typeof(BrowserTitleBar), new PropertyMetadata(false));
-
-        public Uri Uri
-        {
-            get { return (Uri)GetValue(UriProperty); }
-            set { SetValue(UriProperty, value); }
-        }
-
-        public static readonly DependencyProperty UriProperty =
-            DependencyProperty.Register(nameof(Uri), typeof(Uri), typeof(BrowserTitleBar), new PropertyMetadata(""));
-
-        public MenuFlyout MenuItems
-        {
-            get => (MenuFlyout)GetValue(MenuItemsProperty);
-            set => SetValue(MenuItemsProperty, value);
-        }
-
-        public static readonly DependencyProperty MenuItemsProperty =
-            DependencyProperty.Register(nameof(MenuItems), typeof(MenuFlyout), typeof(BrowserTitleBar), null);
-
-        public History History
-        {
-            get => (History)GetValue(HistoryProperty);
-            set => SetValue(HistoryProperty, value);
-        }
-
-        public static readonly DependencyProperty HistoryProperty =
-            DependencyProperty.Register(nameof(History), typeof(History), typeof(BrowserTitleBar), null);
-
-        public bool IsLoading
-        {
-            get => (bool)GetValue(IsLoadingProperty);
-            set => SetValue(IsLoadingProperty, value);
-        }
-
-        public static readonly DependencyProperty IsLoadingProperty =
-            DependencyProperty.Register(nameof(IsLoading), typeof(bool), typeof(BrowserTitleBar), null);
-
-        public event EventHandler<Uri> UriChanged;
-
-        public event RoutedEventHandler BackRequested;
-
-        public event RoutedEventHandler ForwardRequested;
-
-        public event RoutedEventHandler ReloadRequested;
-
-        #endregion
+        public static readonly DependencyProperty ViewModelProperty =
+            DependencyProperty.Register(nameof(ViewModel), typeof(BrowserViewModel), typeof(BrowserTitleBar), null);
 
         public BrowserTitleBar()
         {
@@ -104,8 +51,6 @@ namespace Twin.Controls
 
         private void SetDragRectangles(AppWindow appWindow)
         {
-            if (AppWindowTitleBar.IsCustomizationSupported() && appWindow.TitleBar.ExtendsContentIntoTitleBar)
-            {
                 double scale = GetScaleAdjustment(appWindow);
                 LeftInset.Width = new(appWindow.TitleBar.LeftInset / scale);
                 RightInset.Width = new(appWindow.TitleBar.RightInset / scale);
@@ -136,8 +81,7 @@ namespace Twin.Controls
                         Height = (int)(this.ActualHeight * scale)
                     }
                 };
-                appWindow.TitleBar.SetDragRectangles(rectList.ToArray());
-            }
+                InputNonClientPointerSource.GetForWindowId(appWindow.Id).SetRegionRects(NonClientRegionKind.Caption, rectList.ToArray());
         }
 
         private double GetScaleAdjustment(AppWindow appWindow)
@@ -167,13 +111,12 @@ namespace Twin.Controls
             MDT_Default = MDT_Effective_DPI
         }
 
-        private void OnUriChanged(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        private async void OnUriChanged(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
         {
-            Uri = UriHelpers.StringToUri((args.Element as TextBox).Text);
-            if (Uri is null) return;
-            if (UriChanged is null) return;
+            ViewModel.Uri = UriHelpers.StringToUri((args.Element as TextBox).Text);
+            if (ViewModel.Uri is null) return;
+            await ViewModel.NavigateCommand.ExecuteAsync(null);
 
-            UriChanged.Invoke(this, Uri);
             LoseFocus(args.Element);
         }
 
@@ -188,37 +131,16 @@ namespace Twin.Controls
             control.IsTabStop = isTabStop;
         }
 
-        private void OnBackRequested(object sender, RoutedEventArgs e)
-        {
-            if (BackRequested is null) return;
-
-            BackRequested.Invoke(this, e);
-        }
-
-        private void OnForwardRequested(object sender, RoutedEventArgs e)
-        {
-            if (ForwardRequested is null) return;
-
-            ForwardRequested.Invoke(this, e);
-        }
-
-        private void OnReloadRequested(object sender, RoutedEventArgs e)
-        {
-            if (ReloadRequested is null) return;
-
-            ReloadRequested.Invoke(this, e);
-        }
-
         private void Button_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
             MenuFlyout mf = new()
             {
-                Placement = Microsoft.UI.Xaml.Controls.Primitives.FlyoutPlacementMode.Bottom
+                Placement = Microsoft.UI.Xaml.Controls.Primitives.FlyoutPlacementMode.BottomEdgeAlignedLeft
             };
             mf.Items.Clear();
-            for (int i = 0; i <= History.CurrentPage; i++)
+            for (int i = 0; i <= ViewModel.History.CurrentPage; i++)
             {
-                mf.Items.Add(new MenuFlyoutItem() { Text = UriHelpers.UriToString(History.Items[History.Items.Count - 1 - i]) });
+                mf.Items.Add(new MenuFlyoutItem() { Text = UriHelpers.UriToString(ViewModel.History.Items[ViewModel.History.Items.Count - 1 - i]) });
             }
             mf.ShowAt(sender as FrameworkElement);
         }

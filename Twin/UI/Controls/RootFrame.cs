@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Twin.Controls
+namespace Twin.UI.Controls
 {
     public class RootFrame : Frame
     {
-        public IntPtr Hwnd;
+        public nint Hwnd;
     }
 }

@@ -46,7 +46,8 @@ namespace Twin
             this.Services = new ServiceCollection()
                 .AddTransient<BrowserViewModel>() // viewmodels
                 .AddSingleton<GeminiService>() // services
-                .AddTransient<IDialogService, DialogService>()
+                .AddScoped<XamlRootService>()
+                .AddScoped<IDialogService, DialogService>()
                 .BuildServiceProvider();
         }
 

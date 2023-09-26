@@ -16,23 +16,14 @@ namespace Twin
     /// </summary>
     public sealed partial class MainWindow : Window
     {
-        public AppWindow AppWindow { get; }
 
         public MainWindow(Uri startUri = null)
         {
             this.Title = "Twin";
             this.InitializeComponent();
-            AppWindow = GetAppWindow();
             SetCustomTitlebar();
             RootFrame.Hwnd = WindowNative.GetWindowHandle(this);
             RootFrame.Navigate(typeof(BrowserView), startUri);
-        }
-
-        private AppWindow GetAppWindow()
-        {
-            IntPtr hWnd = WindowNative.GetWindowHandle(this);
-            WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
-            return AppWindow.GetFromWindowId(wndId);
         }
 
         private void SetCustomTitlebar()
@@ -42,6 +33,7 @@ namespace Twin
             var titlebar = AppWindow.TitleBar;
             titlebar.ExtendsContentIntoTitleBar = true;
             titlebar.PreferredHeightOption = TitleBarHeightOption.Tall;
+            titlebar.IconShowOptions = IconShowOptions.HideIconAndSystemMenu;
             titlebar.ButtonBackgroundColor = Colors.Transparent;
             titlebar.ButtonInactiveBackgroundColor = Colors.Transparent;
             titlebar.ButtonHoverBackgroundColor = ((SolidColorBrush)App.Current.Resources.ThemeDictionaries["SystemControlBackgroundListLowBrush"]).Color;

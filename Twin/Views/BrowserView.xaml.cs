@@ -6,28 +6,21 @@ using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.ComponentModel;
 using System.Net.Mime;
-using System.Threading.Tasks;
-using Twin.Controls;
 using Twin.Core.ViewModels;
 using Twin.Gemini;
 using Twin.Helpers;
-using Windows.ApplicationModel.DataTransfer;
 
 namespace Twin.Views
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class BrowserView : Page
+    public sealed partial class BrowserView : Page, ITabContext
     {
         BrowserViewModel vm;
-        Getter<XamlRoot> DialogRoot => new Getter<XamlRoot>(() => this.XamlRoot);
 
         public BrowserView()
         {
             this.InitializeComponent();
             this.NavigationCacheMode = NavigationCacheMode.Required;
-            vm = IocHelpers.InitViewModel<BrowserViewModel>(DialogRoot);
+            vm = IocHelpers.GetServicesForTab(this).GetRequiredService<BrowserViewModel>();
             vm.PropertyChanged += OnViewmodelPropertyChanged;
         }
 
@@ -65,7 +58,7 @@ namespace Twin.Views
                         contentBox.Inlines.Add(i);
                     }
                 }
-                else
+                else 
                 {
                     contentBox.Text = vm.CurrentPage.Body;
                 }
@@ -176,6 +169,11 @@ namespace Twin.Views
             }
         }
 
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.SetRootForTab(this.XamlRoot);
+        }
+
         //private async Task<string> GetPageInput(string prompt, bool isSensitive)
         //{
         //    PasswordBox textBox = new()
@@ -213,10 +211,6 @@ namespace Twin.Views
         //        await PageErrorDialog.ShowAsync();
         //    }
 
-        private async void ShowInfoDialog(object sender, RoutedEventArgs e)
-        {
-            await aboutDialog.ShowAsync();
-        }
 
         //    private void OnErrorTextCopy(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         //    {

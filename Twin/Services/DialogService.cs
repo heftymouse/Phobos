@@ -13,9 +13,9 @@ namespace Twin.Services
 {
     internal class DialogService : IDialogService
     {
-        private Getter<XamlRoot> xamlRoot;
+        private XamlRootService xamlRoot;
 
-        public DialogService(Getter<XamlRoot> xamlRoot)
+        public DialogService(XamlRootService xamlRoot)
         {
             this.xamlRoot = xamlRoot;
         }
@@ -30,7 +30,7 @@ namespace Twin.Services
 
             ContentDialog dialog = new ContentDialog()
             {
-                XamlRoot = xamlRoot.Value,
+                XamlRoot = xamlRoot.Root,
                 Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
                 Title = "This page is requesting input",
                 PrimaryButtonText = "OK",

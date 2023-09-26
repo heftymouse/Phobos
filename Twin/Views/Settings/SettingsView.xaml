@@ -7,9 +7,5 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <NavigationView HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-        <NavigationView.MenuItems>
-            <NavigationViewItem />
-        </NavigationView.MenuItems>
-    </NavigationView>
+    <TextBlock Style="{ThemeResource TitleLargeTextBlockStyle}" Text="Settings" />
 </Page>

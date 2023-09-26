@@ -30,7 +30,6 @@ namespace Twin.Core.ViewModels
         private GeminiService GeminiService { get; init; }
         private IDialogService DialogService;
 
-        [ActivatorUtilitiesConstructor]
         public BrowserViewModel(GeminiService geminiService, IDialogService dialogService)
         {
             GeminiService = geminiService;
@@ -43,7 +42,6 @@ namespace Twin.Core.ViewModels
             await GoToPageCommand.ExecuteAsync(null);
             this.History.ClearNextPages();
             this.History.Add(Uri!);
-
         }
 
         [RelayCommand]

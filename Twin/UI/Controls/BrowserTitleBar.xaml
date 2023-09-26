@@ -48,8 +48,8 @@
                 <Button
                     Margin="8,0,0,0"
                     Padding="8"
-                    Click="OnBackRequested"
-                    IsEnabled="{x:Bind IsBackEnabled, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.BackCommand}"
+                    IsEnabled="{x:Bind ViewModel.History.CanGoBack, Mode=OneWay}"
                     RightTapped="Button_RightTapped">
                     <FontIcon
                         VerticalAlignment="Center"
@@ -58,8 +58,8 @@
                 </Button>
                 <Button
                     Padding="8"
-                    Click="OnForwardRequested"
-                    IsEnabled="{x:Bind IsForwardEnabled, Mode=OneWay}">
+                    Command="{x:Bind ViewModel.ForwardCommand}"
+                    IsEnabled="{x:Bind ViewModel.History.CanGoForward, Mode=OneWay}">
                     <FontIcon
                         VerticalAlignment="Center"
                         FontSize="16"
@@ -67,8 +67,8 @@
                 </Button>
                 <Button
                     Padding="8"
-                    Click="OnReloadRequested"
-                    IsEnabled="{x:Bind helpers:BindingHelpers.IsNull(Uri, x:True), Mode=OneWay}">
+                    Command="{x:Bind ViewModel.ReloadCommand}"
+                    IsEnabled="{x:Bind helpers:BindingHelpers.IsNull(ViewModel.Uri, x:True), Mode=OneWay}">
                     <FontIcon FontSize="16" Glyph="&#xE149;" />
                 </Button>
                 <ToggleButton Padding="8" Click="OnPanelButtonClicked">
@@ -82,7 +82,7 @@
                 VerticalContentAlignment="Center"
                 IsSpellCheckEnabled="False"
                 PlaceholderText="Enter a Gemini address"
-                Text="{x:Bind helpers:UriHelpers.UriToString(Uri), Mode=OneWay}">
+                Text="{x:Bind helpers:UriHelpers.UriToString(ViewModel.Uri), Mode=OneWay}">
                 <TextBox.KeyboardAccelerators>
                     <KeyboardAccelerator Key="Enter" Invoked="OnUriChanged" />
                 </TextBox.KeyboardAccelerators>
@@ -93,15 +93,14 @@
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Bottom"
                 IsIndeterminate="True"
-                Visibility="{x:Bind IsLoading, Mode=OneWay}" />
+                Visibility="{x:Bind ViewModel.GoToPageCommand.IsRunning, Mode=OneWay}" />
 
             <Button
                 x:Name="FlyoutButton"
                 Grid.Column="3"
                 Padding="8,0,8,0"
                 VerticalAlignment="Stretch"
-                Background="Transparent"
-                Flyout="{x:Bind MenuItems}">
+                Background="Transparent">
                 <SymbolIcon Symbol="More" />
             </Button>
         </Grid>
