@@ -10,13 +10,12 @@ using Twin.Helpers;
 using Twin.Core.Models;
 using Windows.Graphics;
 using Microsoft.UI.Input;
-using System.Windows.Input;
 using Twin.Core.ViewModels;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace Twin.Controls
+namespace Twin.UI.Controls
 {
     public sealed partial class BrowserTitleBar : UserControl
     {

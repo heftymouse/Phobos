@@ -10,7 +10,7 @@ using Twin.Core.ViewModels;
 using Twin.Gemini;
 using Twin.Helpers;
 
-namespace Twin.Views
+namespace Twin.UI.Views
 {
     public sealed partial class BrowserView : Page, ITabContext
     {
@@ -38,10 +38,12 @@ namespace Twin.Views
         {
             if(e.PropertyName == nameof(vm.CurrentPage))
             {
+                contentBox.Inlines.Clear();
+                PageContent.ScrollTo(0, 0, new ScrollingScrollOptions(ScrollingAnimationMode.Disabled));
+                PageContent.ZoomTo(1, null, new ScrollingZoomOptions(ScrollingAnimationMode.Disabled));
                 var contentType = new ContentType(vm.CurrentPage.Meta);
                 if (contentType.MediaType == "text/gemini")
                 {
-                    contentBox.Inlines.Clear();
                     // this is dumbass
                     foreach (Inline i in GemtextRenderer.Render(vm.CurrentPage.Body, vm.Uri))
                     {

@@ -3,7 +3,7 @@ using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using System;
 using WinRT.Interop;
-using Twin.Views;
+using Twin.UI.Views;
 using Twin.Helpers;
 using Microsoft.UI.Xaml.Media;
 // To learn more about WinUI, the WinUI project structure,
