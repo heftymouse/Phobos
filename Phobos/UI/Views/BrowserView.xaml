@@ -1,0 +1,253 @@
+﻿<Page
+    x:Class="Phobos.UI.Views.BrowserView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Phobos.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="using:Phobos.Helpers"
+    xmlns:local="using:Phobos.UI.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:Phobos.Core.Models"
+    xmlns:sys="using:System"
+    xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
+    xmlns:uih="using:Phobos.UI.Helpers"
+    Loaded="Page_Loaded"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <models:ViewState x:Key="MyAnimal">Page</models:ViewState>
+    </Page.Resources>
+
+
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <controls:BrowserTitleBar
+            Grid.Row="0"
+            Commands="{x:Bind commands}"
+            ViewModel="{x:Bind vm}" />
+        <Grid
+            Grid.Row="1"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Background="{ThemeResource LayerFillColorDefaultBrush}"
+            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+            BorderThickness="0,1,0,0">
+            <toolkit:SwitchPresenter
+                x:Name="MainPresenter"
+                TargetType="models:ViewState"
+                Value="{x:Bind vm.State, Mode=OneWay}">
+                <toolkit:Case Value="Page">
+                    <ScrollViewer
+                        x:Name="PageContent"
+                        HorizontalScrollBarVisibility="Auto"
+                        MaxZoomFactor="5"
+                        MinZoomFactor="0.1"
+                        ZoomMode="Enabled">
+                        <ScrollViewer.ContextFlyout>
+                            <MenuFlyout uih:CommandHelpers.Commands="{x:Bind commands}" Placement="Bottom" />
+                        </ScrollViewer.ContextFlyout>
+                        <TextBlock
+                            x:Name="contentBox"
+                            MaxWidth="960"
+                            Margin="12,16,0,0"
+                            HorizontalAlignment="Center"
+                            IsTextSelectionEnabled="True"
+                            TextWrapping="WrapWholeWords" />
+                    </ScrollViewer>
+                </toolkit:Case>
+                <toolkit:Case Value="UnsupportedFile">
+                    <StackPanel
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Spacing="8">
+                        <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Unsupported file type" />
+                        <Button
+                            Command="{x:Bind vm.SavePageCommand, Mode=OneWay}"
+                            Content="Save File"
+                            Style="{ThemeResource AccentButtonStyle}" />
+                    </StackPanel>
+                </toolkit:Case>
+                <toolkit:Case Value="Input">
+                    <Grid
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        ColumnSpacing="4"
+                        RowSpacing="8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2"
+                            Style="{StaticResource TitleTextBlockStyle}"
+                            Text="This page is requesting input"
+                            TextWrapping="WrapWholeWords" />
+                        <TextBlock Grid.Row="1" Text="{x:Bind vm.CurrentPage.Meta, Mode=OneWay}" />
+                        <TextBox
+                            x:Name="InputBox"
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            MaxLength="1024" />
+                        <Button
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Command="{x:Bind vm.NavigateWithInputCommand}"
+                            CommandParameter="{x:Bind InputBox.Text, Mode=OneWay}"
+                            Content="Submit"
+                            Style="{ThemeResource AccentButtonStyle}">
+                            <Button.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="Enter" ScopeOwner="{x:Bind InputBox}" />
+                            </Button.KeyboardAccelerators>
+                        </Button>
+                    </Grid>
+                </toolkit:Case>
+                <toolkit:Case Value="InputSensitive">
+                    <Grid
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        ColumnSpacing="4"
+                        RowSpacing="8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2"
+                            Style="{StaticResource TitleTextBlockStyle}"
+                            Text="This page is requesting input"
+                            TextWrapping="WrapWholeWords" />
+                        <TextBlock Grid.Row="1" Text="{x:Bind vm.CurrentPage.Meta, Mode=OneWay}" />
+                        <PasswordBox
+                            x:Name="SensitiveInputBox"
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            MaxLength="1024" />
+                        <Button
+                            x:Name="SubmitButton"
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Command="{x:Bind vm.NavigateWithInputCommand}"
+                            CommandParameter="{x:Bind SensitiveInputBox.Password, Mode=OneWay}"
+                            Content="Submit"
+                            Style="{ThemeResource AccentButtonStyle}">
+                            <Button.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="Enter" ScopeOwner="{x:Bind SensitiveInputBox}" />
+                            </Button.KeyboardAccelerators>
+                        </Button>
+                    </Grid>
+                </toolkit:Case>
+                <toolkit:Case Value="ClientCertificate">
+                    <StackPanel
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Spacing="8">
+                        <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Client certificate required" />
+                        <TextBlock Text="Client certificates are currently not supported. Check back later!" />
+                    </StackPanel>
+                </toolkit:Case>
+                <toolkit:Case Value="Error">
+                    <Grid
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        ColumnSpacing="4"
+                        RowSpacing="8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock
+                            Grid.Row="0"
+                            Style="{StaticResource TitleTextBlockStyle}"
+                            Text="An error occurred"
+                            TextWrapping="WrapWholeWords" />
+                        <TextBlock
+                            Grid.Row="1"
+                            IsTextSelectionEnabled="True"
+                            Text="{x:Bind vm.ErrorText, Mode=OneWay}" />
+                        <Button
+                            Grid.Row="2"
+                            Content="Retry"
+                            Visibility="{x:Bind isRetryVisible(vm.CurrentPage.Type), Mode=OneWay}" />
+                    </Grid>
+                </toolkit:Case>
+                <toolkit:Case Value="InternalError">
+                    <Grid
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        ColumnSpacing="4"
+                        RowSpacing="4">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="280" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock
+                            Grid.Row="0"
+                            Style="{StaticResource TitleTextBlockStyle}"
+                            Text="An internal error occurred"
+                            TextWrapping="WrapWholeWords" />
+                        <ScrollViewer
+                            Grid.Row="1"
+                            MaxWidth="540"
+                            MaxHeight="260"
+                            HorizontalAlignment="Stretch"
+                            HorizontalScrollBarVisibility="Auto">
+                            <TextBlock
+                                FontFamily="Cascadia Mono, Consolas"
+                                IsTextSelectionEnabled="True"
+                                Text="{x:Bind vm.ErrorText, Mode=OneWay}" />
+                        </ScrollViewer>
+                        <Button Grid.Row="2" Content="Copy Error" />
+                    </Grid>
+                </toolkit:Case>
+                <toolkit:Case Value="StartPage">
+                    <StackPanel
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Orientation="Vertical"
+                        Spacing="8">
+                        <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Welcome to Phobos" />
+                        <TextBlock>
+                            <!--  formatting is a bit weird, will be removed after localization  -->
+                            Thank you for trying Phobos Alpha! Please report any issues or suggest features on&#32;<Hyperlink NavigateUri="https://github.com/heftymouse/Phobos">GitHub</Hyperlink>
+                            .</TextBlock>
+                        <Grid Margin="0,16,0,0" HorizontalAlignment="Stretch">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <!--<TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                Text="Pinned" />
+                            <ListView ItemsSource="" />-->
+                        </Grid>
+                    </StackPanel>
+                </toolkit:Case>
+            </toolkit:SwitchPresenter>
+        </Grid>
+    </Grid>
+</Page>

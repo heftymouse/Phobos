@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
+  xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
+  IgnorableNamespaces="uap rescap mp">
+
+  <Identity
+    Name="49808NBApps.291997B086CAA"
+    Publisher="CN=C0AAFDF8-5444-4762-8A4F-B4561AEF71D0"
+    Version="0.1.0.0" />
+
+  <Properties>
+    <DisplayName>Phobos</DisplayName>
+    <PublisherDisplayName>heftymouse</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="x-generate"/>
+  </Resources>
+
+  <Applications>
+    <Application Id="App"
+      Executable="$targetnametoken$.exe"
+      EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+        DisplayName="Phobos"
+        Description="A Gemini browser for Windows"
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png"
+        >
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"  Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png"/>
+        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+      </uap:VisualElements>
+      <Extensions>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="gemini">
+            <uap:Logo>Assets\StoreLogo.png</uap:Logo>
+            <uap:DisplayName>Gemini</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
+        <uap5:Extension Category="windows.appExecutionAlias">
+          <uap5:AppExecutionAlias>
+            <uap5:ExecutionAlias Alias="Phobos.exe"/>
+          </uap5:AppExecutionAlias>
+        </uap5:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+    <Capability Name="internetClient"/>
+  </Capabilities>
+</Package>
