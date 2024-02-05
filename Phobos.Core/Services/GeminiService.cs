@@ -16,7 +16,7 @@ using CommunityToolkit.HighPerformance;
 
 namespace Phobos.Core.Services
 {
-	public class GeminiService
+	public class GeminiService(IAppDataService appData)
 	{
 		public GeminiResponse RequestPageAsync(Uri uri)
 		{
@@ -44,13 +44,17 @@ namespace Phobos.Core.Services
 			var meta = Encoding.UTF8.GetString(data.Slice(3, headerEnd - 3));
 			var body = data.Slice(headerEnd + 2).AsBytes().ToArray();
 
-			return new GeminiResponse((GeminiResponseType)data[0] - 48, data[1] - 48, meta, body);
+            byte[] hash = new byte[32];
+            sslStream.RemoteCertificate!.TryGetCertHash(HashAlgorithmName.SHA256, hash, out int bytesWritten);
+			Certificate cert = new(sslStream.RemoteCertificate!.Subject, hash);
+            var certStatus = appData.CheckCertificate(cert);
+
+            return new GeminiResponse((GeminiResponseType)data[0] - 48, data[1] - 48, meta, body, certStatus, cert);
 		}
 
 		static bool VerifyServerCert(object sender, X509Certificate? certificate, X509Chain? chain, SslPolicyErrors errors)
 		{
-			//byte[] hash = new byte[64];
-			//certificate.TryGetCertHash(HashAlgorithmName.SHA256, hash, out int bytesWritten);
+			
 			return true;
 		}
 
@@ -62,7 +66,7 @@ namespace Phobos.Core.Services
 
 			bool isPreformat = false;
 			StringBuilder preformatBuilder = new();
-			string preformatAlt = null;
+			string? preformatAlt = null;
 
 			bool isQuote = false;
 			StringBuilder quoteBuilder = new();
@@ -76,13 +80,13 @@ namespace Phobos.Core.Services
                     result.Add(new QuoteNode(quoteBuilder.ToString()));
                 }
 
-                if (line.Length == 0)
-				{
-					result.Add(new TextNode(""));
-					continue;
-				}
+                if (!isPreformat && line.Length == 0)
+                {
+                    result.Add(new TextNode(""));
+                    continue;
+                }
 
-				if (line.StartsWith("```".AsSpan()))
+                if (line.StartsWith("```".AsSpan()))
 				{
 					if (isPreformat)
 					{
@@ -99,13 +103,13 @@ namespace Phobos.Core.Services
 					}
 				}
 
-				else if (isPreformat)
-				{
-					preformatBuilder.Append(line);
-					preformatBuilder.Append('\n');
-				}
+                else if (isPreformat)
+                {
+                    preformatBuilder.Append(line);
+                    preformatBuilder.Append('\n');
+                }
 
-				else if (line[0] is '#')
+                else if (line[0] is '#')
 				{
 					var count = line.Slice(0, 3).LastIndexOf('#') + 1;
 					var heading = line.Slice(count).Trim().ToString();

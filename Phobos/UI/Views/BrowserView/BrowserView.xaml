@@ -14,13 +14,9 @@
     Loaded="Page_Loaded"
     mc:Ignorable="d">
 
-    <Page.Resources>
-        <models:ViewState x:Key="MyAnimal">Page</models:ViewState>
-    </Page.Resources>
-
-
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
@@ -28,8 +24,34 @@
             Grid.Row="0"
             Commands="{x:Bind commands}"
             ViewModel="{x:Bind vm}" />
-        <Grid
+        <InfoBar
+            x:Name="certMismatchAlert"
             Grid.Row="1"
+            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+            BorderThickness="0,1,0,0"
+            CornerRadius="0"
+            IsClosable="True"
+            Message="Certificate could not be validated."
+            Severity="Warning">
+            <InfoBar.ActionButton>
+                <Button
+                    HorizontalAlignment="Right"
+                    Command="{x:Bind vm.UpdateCertificateCommand}"
+                    Content="Update Certificate" />
+            </InfoBar.ActionButton>
+        </InfoBar>
+        <InfoBar
+            x:Name="newCertAlert"
+            Grid.Row="1"
+            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+            BorderThickness="0,1,0,0"
+            CornerRadius="0"
+            IsClosable="True"
+            Message="Certificate was added to the trust store."
+            Severity="Informational" />
+        <Grid
+            Grid.Row="2"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
             Background="{ThemeResource LayerFillColorDefaultBrush}"
@@ -222,29 +244,16 @@
                     <StackPanel
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Orientation="Vertical"
-                        Spacing="8">
-                        <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Welcome to Phobos" />
-                        <TextBlock>
+                        Orientation="Vertical">
+                        <TextBlock
+                            Margin="0,0,0,4"
+                            Style="{StaticResource TitleTextBlockStyle}"
+                            Text="Welcome to Phobos" />
+                        <TextBlock Margin="0,0,0,12">
                             <!--  formatting is a bit weird, will be removed after localization  -->
-                            Thank you for trying Phobos Alpha! Please report any issues or suggest features on&#32;<Hyperlink NavigateUri="https://github.com/heftymouse/Phobos">GitHub</Hyperlink>
-                            .</TextBlock>
-                        <Grid Margin="0,16,0,0" HorizontalAlignment="Stretch">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <!--<TextBlock
-                                Grid.Row="0"
-                                Grid.Column="0"
-                                Style="{StaticResource BodyStrongTextBlockStyle}"
-                                Text="Pinned" />
-                            <ListView ItemsSource="" />-->
-                        </Grid>
+                            Thank you for trying Phobos Alpha! Please report any issues or suggest features on&#32;<Hyperlink NavigateUri="https://github.com/heftymouse/Phobos">GitHub.</Hyperlink>
+                        </TextBlock>
+                        <controls:BookmarksList ViewModel="{x:Bind vm}" />
                     </StackPanel>
                 </toolkit:Case>
             </toolkit:SwitchPresenter>

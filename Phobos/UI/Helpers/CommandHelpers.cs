@@ -27,7 +27,6 @@ namespace Phobos.UI.Helpers
                     Command = e,
                 }));
             }
-
         }
 
         public static readonly DependencyProperty CommandsProperty =

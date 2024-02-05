@@ -16,5 +16,12 @@ namespace Phobos.Core.Models
         ClientCertificateRequired = 6
     }
 
-    public readonly record struct GeminiResponse(GeminiResponseType Type, int Code, string Meta, byte[] Body);
+    public record GeminiResponse(
+        GeminiResponseType Type,
+        int Code,
+        string Meta,
+        byte[] Body,
+        CertificateStatus CertificateStatus,
+        Certificate Certificate
+    );
 }

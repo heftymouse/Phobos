@@ -17,17 +17,29 @@
     <AppxBundle>Never</AppxBundle>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
-    <PublishTrimmed>True</PublishTrimmed>
-    <TrimMode>link</TrimMode>
     <PackageCertificateThumbprint>96F2215D20FD51D28A216209A68AFB424ECF336E</PackageCertificateThumbprint>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
     <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
   </PropertyGroup>
+
+  <PropertyGroup Condition="$(Configuration) == 'Release'">
+    <PublishTrimmed>True</PublishTrimmed>
+    <TrimMode>link</TrimMode>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <TrimmerRootAssembly Include="Phobos" />
+    <TrimmerRootAssembly Include="Phobos.Core" />
+  </ItemGroup>
+  
   <ItemGroup>
     <None Remove="UI\Controls\GemtextView.xaml" />
-    <None Remove="UI\Views\BrowserView.xaml" />
-    <None Remove="UI\Views\SettingsView.xaml" />
+    <None Remove="UI\Controls\TitleBar.xaml" />
+    <None Remove="UI\Views\BrowserView\BookmarksList.xaml" />
+    <None Remove="UI\Views\BrowserView\BrowserView.xaml" />
+    <None Remove="UI\Views\BrowserView\SettingsPage.xaml" />
+    <None Remove="UI\Views\BrowserView\SettingsView.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -51,11 +63,23 @@
     <ProjectReference Include="..\Phobos.Core\Phobos.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Page Update="UI\Controls\GemtextView.xaml">
+    <Page Update="UI\Views\BrowserView\GemtextView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <TrimmerRootAssembly Include="Phobos" />
+    <Page Update="UI\Controls\TitleBar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="UI\Views\SettingsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="UI\Views\BrowserView\BookmarksList.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 </Project>

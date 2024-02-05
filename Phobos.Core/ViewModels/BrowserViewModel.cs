@@ -1,20 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Net.Mime;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Phobos.Core.Models;
 using Phobos.Core.Services;
 
 namespace Phobos.Core.ViewModels
 {
-    public partial class BrowserViewModel : ObservableObject
+    public partial class BrowserViewModel(GeminiService GeminiService, IFileService FileService, IAppDataService AppDataService) : ObservableObject
     {
         [ObservableProperty]
         Uri? uri;
@@ -30,6 +22,8 @@ namespace Phobos.Core.ViewModels
 
         public History History { get; private set; } = new();
 
+        public IReadOnlyList<Bookmark> Bookmarks => AppDataService.Bookmarks;
+
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(ForwardCommand))]
         bool canGoForward;
@@ -43,17 +37,7 @@ namespace Phobos.Core.ViewModels
         [NotifyCanExecuteChangedFor(nameof(SavePageCommand))]
         bool canReload = false;
 
-        private GeminiService GeminiService { get; init; }
-        private IFileService FileService { get; init; }
-
-        public BrowserViewModel(GeminiService geminiService, IFileService fileService)
-        {
-            GeminiService = geminiService;
-            FileService = fileService;
-        }
-
         [RelayCommand]
-
         public async Task Navigate()
         {
             await GoToPageCommand.ExecuteAsync(null);
@@ -101,7 +85,7 @@ namespace Phobos.Core.ViewModels
         {
             try
             {
-                GeminiResponse response = await Task.Run(() => this.GeminiService.RequestPageAsync(this.Uri!));
+                GeminiResponse response = await Task.Run(() => GeminiService.RequestPageAsync(this.Uri!));
 
                 switch (response.Type)
                 {
@@ -163,6 +147,22 @@ namespace Phobos.Core.ViewModels
                 }
             }
             await FileService.SaveFileAsync(name, extension, this.CurrentPage.Body);
+        }
+
+        [RelayCommand]
+        public void UpdateCertificate()
+        {
+            AppDataService.SetCertificate(this.CurrentPage.Certificate);
+        }
+
+        public void AddBookmark(string name, Uri uri)
+        {
+            AppDataService.AddBookmark(new(name, uri ?? this.Uri!));
+        }
+
+        public void RemoveBookmark(Bookmark bookmark) 
+        {
+            AppDataService.RemoveBookmark(bookmark);
         }
     }
 }

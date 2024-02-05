@@ -59,37 +59,37 @@ namespace Phobos.UI.Controls
 
         private void SetDragRectangles(AppWindow appWindow)
         {
-                double scale = GetScaleAdjustment(appWindow);
-                LeftInset.Width = new(appWindow.TitleBar.LeftInset / scale);
-                RightInset.Width = new(appWindow.TitleBar.RightInset / scale);
+            double scale = GetScaleAdjustment(appWindow);
+            LeftInset.Width = new(appWindow.TitleBar.LeftInset / scale);
+            RightInset.Width = new(appWindow.TitleBar.RightInset / scale);
 
-                List<RectInt32> rectList = new()
+            RectInt32[] rectList =
+            [
+                new()
                 {
-                    new()
-                    {
-                        X = 0,
-                        Y = 0,
-                        Width = (int)(this.ActualWidth * scale),
-                        Height = (int)(10 * scale)
-                    },
+                    X = 0,
+                    Y = 0,
+                    Width = (int)(this.ActualWidth * scale),
+                    Height = (int)(10 * scale)
+                },
 
-                    new()
-                    {
-                        X = (int)((LeftInset.ActualWidth + NavButtons.ActualWidth) * scale),
-                        Y = 0,
-                        Width = (int)(LeftDragArea.ActualWidth * scale),
-                        Height = (int)(this.ActualHeight * scale)
-                    },
+                new()
+                {
+                    X = (int)((LeftInset.ActualWidth + NavButtons.ActualWidth) * scale),
+                    Y = 0,
+                    Width = (int)(LeftDragArea.ActualWidth * scale),
+                    Height = (int)(this.ActualHeight * scale)
+                },
 
-                    new()
-                    {
-                        X = (int)((this.ActualWidth - RightInset.ActualWidth - RightDragArea.ActualWidth + FlyoutButton.ActualWidth) * scale),
-                        Y = 0,
-                        Width = (int)(RightDragArea.ActualWidth * scale),
-                        Height = (int)(this.ActualHeight * scale)
-                    }
-                };
-                InputNonClientPointerSource.GetForWindowId(appWindow.Id).SetRegionRects(NonClientRegionKind.Caption, rectList.ToArray());
+                new()
+                {
+                    X = (int)((this.ActualWidth - RightInset.ActualWidth - RightDragArea.ActualWidth + FlyoutButton.ActualWidth) * scale),
+                    Y = 0,
+                    Width = (int)(RightDragArea.ActualWidth * scale),
+                    Height = (int)(this.ActualHeight * scale)
+                }
+            ];
+            InputNonClientPointerSource.GetForWindowId(appWindow.Id).SetRegionRects(NonClientRegionKind.Caption, rectList);
         }
 
         private double GetScaleAdjustment(AppWindow appWindow)
@@ -153,9 +153,11 @@ namespace Phobos.UI.Controls
             mf.ShowAt(sender as FrameworkElement);
         }
 
-        private void OnPanelButtonClicked(object sender, RoutedEventArgs e)
+        private void OnHomeButtonClick(object sender, RoutedEventArgs e)
         {
-
+            // https://github.com/microsoft/microsoft-ui-xaml/issues/2166
+            ViewModel.Uri = null;
+            ViewModel.State = ViewState.StartPage;
         }
     }
 }

@@ -46,6 +46,8 @@ namespace Phobos
             this.Services = new ServiceCollection()
                 .AddTransient<BrowserViewModel>() // viewmodels
                 .AddSingleton<GeminiService>() // services
+                .AddSingleton<IAppDataService, AppDataService>()
+                .AddSingleton<IEnvironmentService, EnvironmentService>()
                 .AddScoped<XamlRootService>()
                 .AddScoped<IDialogService, DialogService>()
                 .AddScoped<IFileService, FileService>()

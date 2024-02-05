@@ -5,15 +5,19 @@ using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.UI;
 using Phobos.Core.Models;
 using Microsoft.UI.Text;
 using Phobos.Helpers;
+using Windows.UI.Text;
+using Microsoft.UI;
 
 namespace Phobos.Gemini
 {
     internal class GemtextRenderer
     {
+        static FontFamily monoFont = new("Cascadia Mono, Consolas");
+        static SolidColorBrush grayBrush = new(Colors.Gray);
+
         public static void Render(List<GemtextNode> document, InlineCollection result, Action<Uri> linkClick)
         {
             Stopwatch stopwatch = new();
@@ -26,14 +30,11 @@ namespace Phobos.Gemini
                 {
                     case GemtextNodeType.Preformat:
                         {
-                            Span span = new()
-                            {
-                                FontFamily = new FontFamily("Cascadia Mono, Consolas"),
-                            };
-                            span.Inlines.Add(new Run() { Text = node.Content });
+                            Span span = new();
+                            span.Inlines.Add(new Run() { Text = node.Content, FontFamily = monoFont });
                             if ((node as PreformatNode).AltText != null)
                             {
-                                ToolTipService.SetToolTip(span, (node as PreformatNode).AltText);
+                                span.Inlines.Add(new Run() { Text = (node as PreformatNode).AltText, FontStyle = FontStyle.Italic, Foreground = grayBrush });
                             }
                             result.Add(span);
                             break;
@@ -77,7 +78,7 @@ namespace Phobos.Gemini
 
                     case GemtextNodeType.Quote:
                         {
-                            Run run = new() { Text = node.Content, FontStyle = Windows.UI.Text.FontStyle.Italic };
+                            Run run = new() { Text = node.Content, FontStyle = FontStyle.Italic };
                             result.Add(run);
                             break;
                         }

@@ -89,6 +89,17 @@ namespace Phobos.UI.Views
                         return;
 
                     PageContent.ChangeView(0, 0, 1, true);
+                    certMismatchAlert.IsOpen = false;
+                    newCertAlert.IsOpen = false;
+                    switch(vm.CurrentPage.CertificateStatus)
+                    {
+                        case CertificateStatus.New:
+                            newCertAlert.IsOpen = true;
+                            break;
+                        case CertificateStatus.Mismatch:
+                            certMismatchAlert.IsOpen = true;
+                            break;
+                    }
                     var contentType = new ContentType(vm.CurrentPage.Meta);
                     if (contentType.MediaType == "text/gemini")
                     {

@@ -64,8 +64,7 @@
                 <Button
                     x:Name="ForwardButton"
                     Padding="8"
-                    Command="{x:Bind ViewModel.ForwardCommand}"
-                    >
+                    Command="{x:Bind ViewModel.ForwardCommand}">
                     <FontIcon
                         VerticalAlignment="Center"
                         FontSize="16"
@@ -74,9 +73,11 @@
                 <Button
                     x:Name="ReloadButton"
                     Padding="8"
-                    Command="{x:Bind ViewModel.ReloadCommand}"
-                    >
+                    Command="{x:Bind ViewModel.ReloadCommand}">
                     <FontIcon FontSize="16" Glyph="&#xE149;" />
+                </Button>
+                <Button Padding="8" Click="OnHomeButtonClick">
+                    <FontIcon FontSize="16" Glyph="&#xE80F;" />
                 </Button>
             </StackPanel>
 
@@ -86,7 +87,7 @@
                 VerticalContentAlignment="Center"
                 IsSpellCheckEnabled="False"
                 PlaceholderText="Enter a Gemini address"
-                Text="{x:Bind helpers:UriHelpers.UriToString(ViewModel.Uri), Mode=OneWay}">
+                Text="{x:Bind helpers:UriHelpers.UriToString(ViewModel.Uri), Mode=OneWay, FallbackValue=''}">
                 <TextBox.KeyboardAccelerators>
                     <KeyboardAccelerator Key="Enter" Invoked="OnUriChanged" />
                 </TextBox.KeyboardAccelerators>

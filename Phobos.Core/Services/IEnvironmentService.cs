@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Phobos.Core.Services
 {
-    public interface IHistoryService
+    public interface IEnvironmentService
     {
-
+        string DataDirectory { get; }
     }
 }
