@@ -9,5 +9,6 @@ namespace Phobos.Core.Services
     public interface IFileService
     {
         Task SaveFileAsync(string name, string extension, byte[] data);
+        Task<string> SaveTempFileAsync(string name, byte[] data);
     }
 }

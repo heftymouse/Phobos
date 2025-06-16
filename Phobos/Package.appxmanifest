@@ -12,7 +12,7 @@
   <Identity
     Name="49808NBApps.291997B086CAA"
     Publisher="CN=C0AAFDF8-5444-4762-8A4F-B4561AEF71D0"
-    Version="0.1.0.0" />
+    Version="0.3.0.0" />
 
   <Properties>
     <DisplayName>Phobos</DisplayName>

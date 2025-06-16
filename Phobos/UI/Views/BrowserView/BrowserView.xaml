@@ -11,6 +11,7 @@
     xmlns:sys="using:System"
     xmlns:toolkit="using:CommunityToolkit.WinUI.Controls"
     xmlns:uih="using:Phobos.UI.Helpers"
+    KeyboardAcceleratorPlacementMode="Hidden"
     Loaded="Page_Loaded"
     mc:Ignorable="d">
 
@@ -71,6 +72,12 @@
                         <ScrollViewer.ContextFlyout>
                             <MenuFlyout uih:CommandHelpers.Commands="{x:Bind commands}" Placement="Bottom" />
                         </ScrollViewer.ContextFlyout>
+                        <ScrollViewer.KeyboardAccelerators>
+                            <KeyboardAccelerator
+                                Key="Number0"
+                                Invoked="OnResetZoom"
+                                Modifiers="Control" />
+                        </ScrollViewer.KeyboardAccelerators>
                         <TextBlock
                             x:Name="contentBox"
                             MaxWidth="960"
@@ -86,10 +93,14 @@
                         VerticalAlignment="Center"
                         Spacing="8">
                         <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Unsupported file type" />
-                        <Button
-                            Command="{x:Bind vm.SavePageCommand, Mode=OneWay}"
-                            Content="Save File"
-                            Style="{ThemeResource AccentButtonStyle}" />
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Button
+                                Command="{x:Bind vm.OpenTempFileCommand, Mode=OneWay}"
+                                Content="Open in app"
+                                Style="{ThemeResource AccentButtonStyle}" />
+                            <Button Command="{x:Bind vm.SavePageCommand, Mode=OneWay}" Content="Save File" />
+
+                        </StackPanel>
                     </StackPanel>
                 </toolkit:Case>
                 <toolkit:Case Value="Input">
@@ -250,8 +261,7 @@
                             Style="{StaticResource TitleTextBlockStyle}"
                             Text="Welcome to Phobos" />
                         <TextBlock Margin="0,0,0,12">
-                            <!--  formatting is a bit weird, will be removed after localization  -->
-                            Thank you for trying Phobos Alpha! Please report any issues or suggest features on&#32;<Hyperlink NavigateUri="https://github.com/heftymouse/Phobos">GitHub.</Hyperlink>
+                            Thank you for using Phobos! Please report any issues or suggest features on&#32;<Hyperlink NavigateUri="https://github.com/heftymouse/Phobos">GitHub.</Hyperlink>
                         </TextBlock>
                         <controls:BookmarksList ViewModel="{x:Bind vm}" />
                     </StackPanel>

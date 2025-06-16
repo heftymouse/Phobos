@@ -12,6 +12,6 @@ namespace Phobos.Services
     internal class XamlRootService
     {
         public XamlRoot Root;
-        public nint Hwnd => (Root.Content as RootFrame).Hwnd;
+        public nint Hwnd => (Root.Content as RootFrame)!.Hwnd;
     }
 }

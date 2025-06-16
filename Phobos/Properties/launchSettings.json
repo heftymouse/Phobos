@@ -1,8 +1,7 @@
 {
   "profiles": {
     "Phobos (Package)": {
-      "commandName": "MsixPackage",
-      "nativeDebugging": false
+      "commandName": "MsixPackage"
     },
     "Phobos (Unpackaged)": {
       "commandName": "Project"

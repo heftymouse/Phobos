@@ -3,10 +3,11 @@ using CommunityToolkit.Mvvm.Input;
 using System.Diagnostics;
 using Phobos.Core.Models;
 using Phobos.Core.Services;
+using System.Collections.ObjectModel;
 
 namespace Phobos.Core.ViewModels
 {
-    public partial class BrowserViewModel(GeminiService GeminiService, IFileService FileService, IAppDataService AppDataService) : ObservableObject
+    public partial class BrowserViewModel(GeminiService GeminiService, IFileService FileService, IAppDataService AppDataService, IEnvironmentService EnvironmentService) : ObservableObject
     {
         [ObservableProperty]
         Uri? uri;
@@ -22,7 +23,7 @@ namespace Phobos.Core.ViewModels
 
         public History History { get; private set; } = new();
 
-        public IReadOnlyList<Bookmark> Bookmarks => AppDataService.Bookmarks;
+        public ReadOnlyObservableCollection<Bookmark> Bookmarks => AppDataService.Bookmarks;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(ForwardCommand))]
@@ -147,6 +148,17 @@ namespace Phobos.Core.ViewModels
                 }
             }
             await FileService.SaveFileAsync(name, extension, this.CurrentPage.Body);
+        }
+
+        [RelayCommand]
+        public async Task OpenTempFile()
+        {
+            var splitPath = this.Uri!.LocalPath.Split('/');
+            var lastSegment = splitPath[^1];
+
+            var file = await FileService.SaveTempFileAsync(lastSegment, this.CurrentPage.Body);
+            await EnvironmentService.LaunchFile(file);
+
         }
 
         [RelayCommand]

@@ -1,15 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using Phobos.Core.Services;
 using Phobos.Services;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace Phobos.Helpers
 {
@@ -26,13 +19,13 @@ namespace Phobos.Helpers
 
         public static void SetRootForTab(this ITabContext context, XamlRoot xamlRoot)
         {
-            serviceScopes.TryGetValue(context, out IServiceScope scope);
+            var scope = serviceScopes.GetValue(context, (key) => (App.Current as App).Services.CreateScope());
             scope.ServiceProvider.GetRequiredService<XamlRootService>().Root = xamlRoot;
         }
 
         public static void DisposeServices(this ITabContext context)
         {
-            serviceScopes.TryGetValue(context, out IServiceScope scope);
+            serviceScopes.TryGetValue(context, out IServiceScope? scope);
             scope?.Dispose();
         }
     }

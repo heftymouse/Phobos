@@ -6,38 +6,18 @@ using System.Threading.Tasks;
 
 namespace Phobos.Core.Models
 {
-    public enum GemtextNodeType
-    {
-        Text,
-        Link,
-        Preformat,
-        Heading,
-        ListItem,
-        Quote
-    }
+    public abstract record GemtextNode(string Content);
 
-    public abstract record GemtextNode
-    {
-        public GemtextNodeType Type { get; init; }
-        public string Content { get; init; }
+    public record TextNode(string Content) : GemtextNode(Content);
 
-        protected GemtextNode(string content, GemtextNodeType type)
-        {
-            this.Content = content;
-            this.Type = type;
-        }
-    }
+    public record LinkNode(string Content, Uri Uri) : GemtextNode(Content);
 
-    public record TextNode(string Content) : GemtextNode(Content, GemtextNodeType.Text);
+    public record PreformatNode(string Content, string? AltText) : GemtextNode(Content);
 
-    public record LinkNode(string Content, Uri Uri) : GemtextNode(Content, GemtextNodeType.Link);
+    public record HeadingNode(string Content, int Level) : GemtextNode(Content);
 
-    public record PreformatNode(string Content, string? AltText) : GemtextNode(Content, GemtextNodeType.Preformat);
+    public record ListItemNode(string Content) : GemtextNode(Content);
 
-    public record HeadingNode(string Content, int Level) : GemtextNode(Content, GemtextNodeType.Heading);
-
-    public record ListItemNode(string Content) : GemtextNode(Content, GemtextNodeType.ListItem);
-
-    public record QuoteNode(string Content) : GemtextNode(Content, GemtextNodeType.Quote);
+    public record QuoteNode(string Content) : GemtextNode(Content);
 }
 

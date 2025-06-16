@@ -58,7 +58,7 @@
             Grid.Row="1"
             IsItemClickEnabled="True"
             ItemClick="TheList_ItemClick"
-            ItemsSource="{x:Bind ViewModel.Bookmarks}"
+            ItemsSource="{x:Bind ViewModel.Bookmarks, Mode=OneWay}"
             SelectionMode="None">
             <ListView.ItemContainerStyle>
                 <Style BasedOn="{StaticResource DefaultListViewItemStyle}" TargetType="ListViewItem">

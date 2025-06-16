@@ -8,13 +8,13 @@ namespace Phobos.Helpers
 {
     internal class UriHelpers
     {
-        public static string UriToString(Uri uri)
+        public static string? UriToString(Uri uri)
         {
             if (uri is null) return null;
             return $"{uri.Scheme}://{uri.Host}{(uri.IsDefaultPort || uri.Port == 1965 ? string.Empty : $":{uri.Port}")}{uri.PathAndQuery}{uri.Fragment}";
         }
 
-        public static Uri StringToUri(string uri)
+        public static Uri? StringToUri(string uri)
         {
             if (string.IsNullOrEmpty(uri)) return null;
             UriBuilder uriBuilder = new UriBuilder(uri);

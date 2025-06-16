@@ -31,7 +31,7 @@ namespace Phobos.UI.Controls
         }
 
         public static readonly DependencyProperty ViewModelProperty =
-            DependencyProperty.Register(nameof(ViewModel), typeof(BrowserViewModel), typeof(BrowserTitleBar), null);
+            DependencyProperty.Register(nameof(ViewModel), typeof(BrowserViewModel), typeof(BookmarksList), null);
 
         public BookmarksList()
         {

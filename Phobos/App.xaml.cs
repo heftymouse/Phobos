@@ -1,11 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using System;
 using Phobos.Core.Services;
 using Phobos.Core.ViewModels;
 using Phobos.Services;
 using Windows.ApplicationModel.Activation;
+using Jab;
+using System.Diagnostics.CodeAnalysis;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -17,7 +18,7 @@ namespace Phobos
     /// </summary>
     public partial class App : Application
     {
-        public MainWindow m_window;
+        public MainWindow mainWindow;
         public IServiceProvider Services { get; private set; }
         
         public App()
@@ -25,41 +26,28 @@ namespace Phobos
             this.InitializeComponent();
         }
 
+        [MemberNotNull(nameof(Services))]
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            this.ConfigureServices();
+            this.Services = new ServiceProvider();
 
             var appArgs = AppInstance.GetCurrent().GetActivatedEventArgs();
-            m_window = appArgs.Kind switch
+            mainWindow = appArgs.Kind switch
             {
-                ExtendedActivationKind.Protocol => new((appArgs.Data as ProtocolActivatedEventArgs).Uri),
-                ExtendedActivationKind.CommandLineLaunch => new(ParseInputUri((appArgs.Data as CommandLineActivatedEventArgs).Operation.Arguments)),
+                ExtendedActivationKind.Protocol => new((appArgs.Data as ProtocolActivatedEventArgs)!.Uri),
+                ExtendedActivationKind.CommandLineLaunch => new(ParseInputUri((appArgs.Data as CommandLineActivatedEventArgs)!.Operation.Arguments)),
                 _ => new()
             };
 
 
-            m_window.Activate();
+            mainWindow.Activate();
         }
 
-        private void ConfigureServices()
-        {
-            this.Services = new ServiceCollection()
-                .AddTransient<BrowserViewModel>() // viewmodels
-                .AddSingleton<GeminiService>() // services
-                .AddSingleton<IAppDataService, AppDataService>()
-                .AddSingleton<IEnvironmentService, EnvironmentService>()
-                .AddScoped<XamlRootService>()
-                .AddScoped<IDialogService, DialogService>()
-                .AddScoped<IFileService, FileService>()
-                .BuildServiceProvider();
-        }
-
-        private Uri ParseInputUri(string cliArgs)
+        private Uri? ParseInputUri(string cliArgs)
         {
             try
             {
-                var uri = new Uri(cliArgs.Split()[0]);
-                return uri;
+                return new Uri(cliArgs.Split()[0]);
             }
             catch
             {
@@ -67,4 +55,13 @@ namespace Phobos
             }
         }
     }
+
+    [ServiceProvider]
+    [Transient(typeof(BrowserViewModel))]
+    [Singleton(typeof(GeminiService))]
+    [Singleton(typeof(IAppDataService), typeof(AppDataService))]
+    [Singleton(typeof(IEnvironmentService), typeof(EnvironmentService))]
+    [Scoped(typeof(XamlRootService))]
+    [Scoped(typeof(IFileService), typeof(FileService))]
+    public partial class ServiceProvider { }
 }

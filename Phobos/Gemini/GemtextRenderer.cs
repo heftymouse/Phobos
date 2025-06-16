@@ -26,28 +26,28 @@ namespace Phobos.Gemini
 
             foreach (GemtextNode node in document)
             {
-                switch (node.Type)
+                switch (node)
                 {
-                    case GemtextNodeType.Preformat:
+                    case PreformatNode pf:
                         {
                             Span span = new();
                             span.Inlines.Add(new Run() { Text = node.Content, FontFamily = monoFont });
-                            if ((node as PreformatNode).AltText != null)
+                            if (pf.AltText != null)
                             {
-                                span.Inlines.Add(new Run() { Text = (node as PreformatNode).AltText, FontStyle = FontStyle.Italic, Foreground = grayBrush });
+                                span.Inlines.Add(new Run() { Text = pf.AltText, FontStyle = FontStyle.Italic, Foreground = grayBrush });
                             }
                             result.Add(span);
                             break;
                         }
 
-                    case GemtextNodeType.Heading:
+                    case HeadingNode h:
                         {
                             Run run = new()
                             {
                                 Text = node.Content,
-                                FontSize = (node as HeadingNode).Level switch
+                                FontSize = h.Level switch
                                 {
-                                    1 => 40,
+                                    1 => 36,
                                     2 => 28,
                                     3 => 20,
                                     _ => throw new NotImplementedException(),
@@ -58,25 +58,24 @@ namespace Phobos.Gemini
                             break;
                         }
 
-                    case GemtextNodeType.Link:
+                    case LinkNode ln:
                         {
-                            var linkNode = node as LinkNode;
                             Hyperlink link = new();
-                            link.Inlines.Add(new Run() { Text = linkNode.Content });
-                            link.Click += (sender, args) => { linkClick(linkNode.Uri); };
-                            ToolTipService.SetToolTip(link, UriHelpers.UriToString(linkNode.Uri));
+                            link.Inlines.Add(new Run() { Text = ln.Content });
+                            link.Click += (sender, args) => { linkClick(ln.Uri); };
+                            ToolTipService.SetToolTip(link, UriHelpers.UriToString(ln.Uri));
                             result.Add(link);
                             break;
                         }
 
-                    case GemtextNodeType.ListItem:
+                    case ListItemNode:
                         {
                             Run run = new() { Text = $"• {node.Content}" };
                             result.Add(run);
                             break;
                         }
 
-                    case GemtextNodeType.Quote:
+                    case QuoteNode:
                         {
                             Run run = new() { Text = node.Content, FontStyle = FontStyle.Italic };
                             result.Add(run);

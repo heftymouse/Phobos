@@ -24,7 +24,7 @@ namespace Phobos.UI.Helpers
                 obj.SetValue(CommandsProperty, value);
                 value.ForEach((e) => flyout.Items.Add(new MenuFlyoutItem()
                 {
-                    Command = e,
+                    Command = e
                 }));
             }
         }

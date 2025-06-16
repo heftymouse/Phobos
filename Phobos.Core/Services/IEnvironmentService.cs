@@ -9,5 +9,6 @@ namespace Phobos.Core.Services
     public interface IEnvironmentService
     {
         string DataDirectory { get; }
+        Task LaunchFile(string path);
     }
 }

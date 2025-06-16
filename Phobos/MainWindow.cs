@@ -4,8 +4,9 @@ using Microsoft.UI.Windowing;
 using System;
 using WinRT.Interop;
 using Phobos.UI.Views;
-using Phobos.Helpers;
 using Microsoft.UI.Xaml.Media;
+using Phobos.UI.Controls;
+using System.IO;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
@@ -16,14 +17,18 @@ namespace Phobos
     /// </summary>
     public sealed partial class MainWindow : Window
     {
-
-        public MainWindow(Uri startUri = null)
+        public RootFrame RootFrame;
+        public MainWindow(Uri? startUri = null)
         {
             this.Title = "Phobos";
-            this.InitializeComponent();
+            this.SystemBackdrop = new MicaBackdrop();
+            this.AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets/AppIcon.ico"));
             SetCustomTitlebar();
+
+            RootFrame = new RootFrame();
             RootFrame.Hwnd = WindowNative.GetWindowHandle(this);
             RootFrame.Navigate(typeof(BrowserView), startUri);
+            this.Content = RootFrame;
         }
 
         private void SetCustomTitlebar()

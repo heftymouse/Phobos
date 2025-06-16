@@ -2,13 +2,6 @@
 using Microsoft.Data.Sqlite;
 using Dapper;
 using Phobos.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Data;
 
@@ -28,10 +21,11 @@ namespace Phobos.Core.Services
             db = new SqliteConnection($"Data Source={Path.Combine(environment.DataDirectory, "data.db")}");
             db.Open();
             EnsureVersionAndTables();
-            bookmarks = new ObservableCollection<Bookmark>(db.Query<Bookmark>("SELECT * FROM bookmarks"));
+            bookmarks = new ObservableCollection<Bookmark>(GetBookmarks(db).ToList());
             Bookmarks = new ReadOnlyObservableCollection<Bookmark>(bookmarks);
         }
 
+        static IEnumerable<Bookmark> GetBookmarks(SqliteConnection db) => db.Query<InternalBookmark>("SELECT * FROM bookmarks").Select(e => new Bookmark(e.Name, new Uri(e.Uri)));
         public void AddBookmark(Bookmark bookmark)
         {
             bookmarks.Add(bookmark);
@@ -91,7 +85,6 @@ namespace Phobos.Core.Services
             }
         }
 
-
         public void Dispose()
         {
             db.Dispose();
@@ -113,4 +106,6 @@ namespace Phobos.Core.Services
             }
         }
     }
+
+    record InternalBookmark(string Name, string Uri);
 }

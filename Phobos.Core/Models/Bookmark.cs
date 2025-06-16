@@ -9,8 +9,8 @@ namespace Phobos.Core.Models
     // todo: fix this when dapper supports not doing this
     public record Bookmark
     {
-        public string Name { get; init; }
-        public Uri Uri { get; init; }
+        public string Name { get; set; }
+        public Uri Uri { get; set; }
 
         public Bookmark(string name, Uri uri)
         {

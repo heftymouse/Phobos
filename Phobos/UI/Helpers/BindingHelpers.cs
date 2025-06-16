@@ -9,20 +9,11 @@ namespace Phobos.UI.Helpers
 {
     internal static class BindingHelpers
     {
-        public static bool Inverse(this bool value)
-        {
-            return !value;
-        }
+        public static bool Inverse(this bool value) => !value;
 
-        public static bool IsNotEmpty(string value)
-        {
-            return !string.IsNullOrEmpty(value);
-        }
+        public static bool IsNotEmpty(string value) => !string.IsNullOrEmpty(value);
 
-        public static bool IsNull(object value, bool inverse = false)
-        {
-            if (inverse) return value is not null;
-            return value is null;
-        }
+        public static bool IsNull(object value, bool inverse = false) 
+            => (value is null) ^ inverse;
     }
 }

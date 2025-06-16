@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Phobos.UI.Controls
 {
-    public class RootFrame : Frame
+    public partial class RootFrame : Frame
     {
         public nint Hwnd;
     }

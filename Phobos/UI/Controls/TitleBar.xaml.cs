@@ -35,7 +35,7 @@ namespace Phobos.UI.Controls
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             if (!AppWindowTitleBar.IsCustomizationSupported()) return;
-            var appWindow = (App.Current as App).m_window?.AppWindow;
+            var appWindow = (App.Current as App).mainWindow?.AppWindow;
 
             if (!appWindow.TitleBar.ExtendsContentIntoTitleBar) return;
 

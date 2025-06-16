@@ -16,6 +16,10 @@ using Phobos.Core.Services;
 using Windows.System;
 using Microsoft.UI.Xaml.Media;
 using Phobos.Core.Models;
+using CommunityToolkit.Mvvm.Input;
+using System.Windows.Input;
+using Windows.Security.Cryptography.Certificates;
+using System.Diagnostics;
 
 namespace Phobos.UI.Views
 {
@@ -23,6 +27,7 @@ namespace Phobos.UI.Views
     {
         BrowserViewModel vm;
         List<XamlUICommand> commands = new();
+        Dictionary<KeyboardAccelerator, ICommand> acceleratorCommandMap = new();
 
         public BrowserView()
         {
@@ -30,43 +35,50 @@ namespace Phobos.UI.Views
             this.NavigationCacheMode = NavigationCacheMode.Required;
             vm = IocHelpers.GetServicesForTab(this).GetRequiredService<BrowserViewModel>();
             vm.PropertyChanged += OnViewmodelPropertyChanged;
-            var forwardCommand = new XamlUICommand
-            {
-                Label = "Forward",
-                IconSource = new SymbolIconSource { Symbol = Symbol.Forward },
-                Command = vm.ForwardCommand
-            };
-            forwardCommand.KeyboardAccelerators.Add(new KeyboardAccelerator() { Key = VirtualKey.Left, Modifiers = VirtualKeyModifiers.Control });
-            commands.Add(forwardCommand);
 
-            var backCommand = new XamlUICommand
-            {
-                Label = "Back",
-                IconSource = new SymbolIconSource { Symbol = Symbol.Back },
-                Command = vm.BackCommand
-            };
-            backCommand.KeyboardAccelerators.Add(new KeyboardAccelerator() { Key = VirtualKey.Right, Modifiers = VirtualKeyModifiers.Control });
-            commands.Add(backCommand);
+            AddCommandWithAccelerator(
+                new XamlUICommand { Label = "Forward", IconSource = new SymbolIconSource { Symbol = Symbol.Forward }, Command = vm.ForwardCommand },
+                VirtualKey.Right, VirtualKeyModifiers.Control, vm.ForwardCommand);
 
-            var reloadCommand = new XamlUICommand
-            {
-                Label = "Reload",
-                IconSource = new SymbolIconSource { Symbol = Symbol.Refresh },
-                Command = vm.ReloadCommand
-            };
-            reloadCommand.KeyboardAccelerators.Add(new KeyboardAccelerator() { Key = VirtualKey.R, Modifiers = VirtualKeyModifiers.Control });
+            AddCommandWithAccelerator(
+                new XamlUICommand { Label = "Back", IconSource = new SymbolIconSource { Symbol = Symbol.Back }, Command = vm.BackCommand },
+                VirtualKey.Left, VirtualKeyModifiers.Control, vm.BackCommand);
 
-            commands.Add(reloadCommand);
+            AddCommandWithAccelerator(
+                new XamlUICommand { Label = "Reload", IconSource = new SymbolIconSource { Symbol = Symbol.Refresh }, Command = vm.ReloadCommand },
+                VirtualKey.R, VirtualKeyModifiers.Control, vm.ReloadCommand);
 
-            var saveCommand = new XamlUICommand
-            {
-                Label = "Save",
-                IconSource = new SymbolIconSource { Symbol = Symbol.Save },
-                Command = vm.SavePageCommand
-            };
-            saveCommand.KeyboardAccelerators.Add(new KeyboardAccelerator() { Key = VirtualKey.S, Modifiers = VirtualKeyModifiers.Control });
+            AddCommandWithAccelerator(
+                new XamlUICommand { Label = "Save", IconSource = new SymbolIconSource { Symbol = Symbol.Save }, Command = vm.SavePageCommand },
+                VirtualKey.S, VirtualKeyModifiers.Control, vm.SavePageCommand);
 
-            commands.Add(saveCommand);
+            AddCommandWithAccelerator(
+                new XamlUICommand
+                {
+                    Label = "New Window",
+                    IconSource = new SymbolIconSource { Symbol = Symbol.Add },
+                    Command = new RelayCommand(() =>
+                    {
+                        var w = new MainWindow();
+                        w.Activate();
+                    })
+                },
+                VirtualKey.N, VirtualKeyModifiers.Control, new RelayCommand(() =>
+                {
+                    var w = new MainWindow();
+                    w.Activate();
+                }));
+        }
+
+        private void AddCommandWithAccelerator(XamlUICommand command, VirtualKey key, VirtualKeyModifiers modifiers, ICommand mappedCommand)
+        {
+            var cmdAccel = new KeyboardAccelerator() { Key = key, Modifiers = modifiers };
+            var pageAccel = new KeyboardAccelerator() { Key = key, Modifiers = modifiers };
+            pageAccel.Invoked += OnKeyboardAccelerator;
+            command.KeyboardAccelerators.Add(cmdAccel);
+            this.KeyboardAccelerators.Add(pageAccel);
+            acceleratorCommandMap[pageAccel] = mappedCommand;
+            commands.Add(command);
         }
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
@@ -79,7 +91,7 @@ namespace Phobos.UI.Views
             }
         }
 
-        private void OnViewmodelPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void OnViewmodelPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
@@ -141,6 +153,22 @@ namespace Phobos.UI.Views
         Visibility isRetryVisible(GeminiResponseType type)
         {
             return type == GeminiResponseType.TemporaryFailure ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void OnKeyboardAccelerator(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            if (acceleratorCommandMap.TryGetValue(sender, out var command))
+            {
+                if (command.CanExecute(null))
+                    command.Execute(null);
+            }
+            args.Handled = true;
+        }
+
+        private void OnResetZoom(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            var scrollViewer = args.Element as ScrollViewer;
+            scrollViewer?.ChangeView(null, null, 1);
         }
     }
 }

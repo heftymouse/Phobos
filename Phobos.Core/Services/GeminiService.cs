@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.Diagnostics;
-using System.Buffers.Binary;
-using System.Threading.Tasks;
 using System.Net.Security;
 using System.Security.Cryptography;
 using System.Security.Authentication;
@@ -25,8 +20,7 @@ namespace Phobos.Core.Services
 
 			sslStream.AuthenticateAsClient(uri.Host, null, SslProtocols.Tls13 | SslProtocols.Tls12, true);
 
-			sslStream.Write(Encoding.UTF8.GetBytes(uri.ToString()));
-			sslStream.Write("\r\n"u8);
+			sslStream.Write(Encoding.UTF8.GetBytes(uri.AbsoluteUri + "\r\n")); 
 			sslStream.Flush();
 
 			using ArrayPoolBufferWriter<byte> buffer = new();
@@ -54,7 +48,6 @@ namespace Phobos.Core.Services
 
 		static bool VerifyServerCert(object sender, X509Certificate? certificate, X509Chain? chain, SslPolicyErrors errors)
 		{
-			
 			return true;
 		}
 
@@ -71,7 +64,9 @@ namespace Phobos.Core.Services
 			bool isQuote = false;
 			StringBuilder quoteBuilder = new();
 
-			var lines = body.AsSpan().EnumerateLines();
+            Span<Range> ranges = stackalloc Range[2];
+
+            var lines = body.AsSpan().EnumerateLines();
 			foreach (var line in lines)
 			{
                 if (isQuote && line.Length > 0 && line[0] is not '>')
@@ -96,7 +91,6 @@ namespace Phobos.Core.Services
 					else
 					{
 						isPreformat = true;
-						Span<Range> ranges = new Range[2];
 						var num = line.SplitAny(ranges, ReadOnlySpan<char>.Empty, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 						preformatBuilder = new();
 						preformatAlt = num == 2 ? line[ranges[1]].ToString() : null;
@@ -120,7 +114,6 @@ namespace Phobos.Core.Services
 				else if (line.StartsWith("=>".AsSpan()))
 				{
 					var text = line.TrimStart(['=', '>']);
-					Span<Range> ranges = new Range[2];
 					var num = text.SplitAny(ranges, ReadOnlySpan<char>.Empty, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 					var uriString = text[ranges[0]].ToString();
 					var uri = uriString.Contains("://")
